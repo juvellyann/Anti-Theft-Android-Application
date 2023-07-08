@@ -239,8 +239,8 @@ public class LoginPage extends AppCompatActivity {
                 String username = objects[0].toString();
                 String password = objects[1].toString();
 
-//                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=login&sUsername="+username+"&sPassword="+password;
-                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=login&sUsername=johndoe&sPassword=mypassword";
+                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=login&sUsername="+username+"&sPassword="+password;
+//                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=login&sUsername=johndoe&sPassword=mypassword";
 
 
 
