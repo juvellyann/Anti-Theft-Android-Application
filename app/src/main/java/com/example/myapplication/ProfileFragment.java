@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,12 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -28,14 +35,20 @@ public class ProfileFragment extends Fragment {
 //    private String mParam1;
 //    private String mParam2;
 
-    private String userId;
+    String id = null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
 
-    public ProfileFragment() {
+    public ProfileFragment(String email, String fullName, String userName, String contact, String brand, String emergency) {
         // Required empty public constructor
+        this.email = email;
+        this.fullName = fullName;
+        this.userName = userName;
+        this.contact = contact;
+        this.brand = brand;
+        this.emergency = emergency;
     }
 
     public String setMyArgument(String Id) {
-        this.userId= Id;
+        this.email= Id;
         return Id;
     }
 
@@ -75,7 +88,7 @@ public class ProfileFragment extends Fragment {
 //            mParam2 = getArguments().getString(ARG_PARAM2);
 //        }
         if(getArguments() != null){
-            userId = getArguments().getString("userId");
+            email = getArguments().getString("userId");
         }
     }
 
@@ -87,16 +100,17 @@ public class ProfileFragment extends Fragment {
 //        LoginPage loginPage = new LoginPage();
 //        String link = this.getArguments().getString("link");
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        TextView Email, Username, FullName, ContactNo, Brand;
-        String email = null, fullName = null, username = null, contact= null, brand = null;
+        TextView Email, Username, FullName, ContactNo, Brand, EmergencyContactNum;
+
 
         Email = (TextView) view.findViewById(R.id.EmailText);
         Username = (TextView) view.findViewById(R.id.UsernameText);
         FullName = (TextView) view.findViewById(R.id.NameText);
         ContactNo = (TextView) view.findViewById(R.id.NumberText);
         Brand = (TextView) view.findViewById(R.id.motorcycleTypeText);
+        EmergencyContactNum = (TextView) view.findViewById(R.id.EmergencyContactText);
 
-        String okayId = setMyArgument(userId);
+        String okayId = setMyArgument(email);
 
 //        Bundle bundle = this.getArguments();
 //
@@ -115,8 +129,12 @@ public class ProfileFragment extends Fragment {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("User");
         //DatabaseReference reference;
 
-
-
+        Email.setText(email);
+        FullName.setText(fullName);
+        ContactNo.setText(contact);
+        Username.setText(userName);
+        Brand.setText(brand);
+        EmergencyContactNum.setText(emergency);
         //reference = FirebaseDatabase.getInstance().getReference().child("User");
 
 
@@ -152,7 +170,6 @@ public class ProfileFragment extends Fragment {
     private void UserDetails(){
         LoginPage loginPage = new LoginPage();
     }
-
 }
 
 

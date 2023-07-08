@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -76,7 +77,7 @@ public class LoginPage extends AppCompatActivity {
     private JSONArray resultJsonArray;
     String value = "";
     String linkUrl = "";
-    String email = null, fullName = null, userName = null, contact= null, brand = null;
+    String id=null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
 
 
     @Override
@@ -228,7 +229,7 @@ public class LoginPage extends AppCompatActivity {
 //        startActivity(intent);
 
         //String username, password;
-
+        User currentUser;
         protected void onPreExecute(){
         }
 
@@ -239,11 +240,16 @@ public class LoginPage extends AppCompatActivity {
                 String password = objects[1].toString();
 
                 linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=login&sUsername="+username+"&sPassword="+password;
+//                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=login&sUsername=johndoe&sPassword=mypassword";
+
+
+
                 String data = "&s" + URLEncoder.encode("sUsername", "UTF-8") + "=" +
                         URLEncoder.encode(username, "UTF-8");
                 data += "&" + URLEncoder.encode("sPassword", "UTF-8") + "=" +
                         URLEncoder.encode(password, "UTF-8");
 
+                String tempData = URLEncoder.encode("sEmail", "UTF-8");
                 URL url = new URL(linkUrl);
                 URLConnection conn = url.openConnection();
 
@@ -265,7 +271,61 @@ public class LoginPage extends AppCompatActivity {
                     break;
                 }
 
-                GetUserInfo(linkUrl);
+                HttpResponse response = null;
+                try {
+                    HttpClient client = new DefaultHttpClient();
+                    HttpGet request = new HttpGet();
+                    request.setURI(new URI(
+                            linkUrl));
+                    response = client.execute(request);
+                    int status = response.getStatusLine().getStatusCode();
+                    Log.d("Status Code",status+"");
+
+//                    if(status == 200){
+                        HttpEntity entity = response.getEntity();
+                        String mydata = EntityUtils.toString(entity);
+                        Log.d("Temp",mydata);
+                        JSONObject json = new JSONObject(mydata);
+                        JSONObject user = json.getJSONObject("user");
+
+                        if(json.getString("status") == "error"){
+                            Log.d("Logged Message","Login Failed");
+                        }else{
+                            Log.d("Logged Message","Login Success");
+                            Log.d("Current User",user.getString("sFirstname"));
+
+                            id = user.getString("id");
+                            String lastname = user.getString("sLastname");
+                            String firstname = user.getString("sFirstname");
+                            fullName = firstname + " " + lastname;
+                            email = user.getString("sEmail");
+                            userName = user.getString("sUsername");
+                            contact = user.getString("sContact");
+                            brand = user.getString("sModel");
+                            emergency = user.getString("sEContact");
+                            Log.d("Current User",firstname);
+                            currentUser = new User(id,email,firstname,lastname,username,contact,brand, emergency);
+                            Log.d("Current User Object",currentUser.toString());
+                        }
+
+//                    }
+
+
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                String responseText = null;
+
+                //Log.i("responseText", responseText);
+
+//                GetUserInfo(linkUrl);
 //                Intent intent = new Intent(LoginPage.this, HomePage.class);
 //                startActivity(intent);
 //                finish();
@@ -280,15 +340,17 @@ public class LoginPage extends AppCompatActivity {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             Intent intent = new Intent(LoginPage.this, HomePage.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putString("email", email );
-//            bundle.putString("fullName", fullName );
-//            bundle.putString("username", userName );
-//            bundle.putString("contact", contact );
-//            bundle.putString("brand", brand );
-//            intent.putExtras(bundle);
+            Bundle bundle = new Bundle();
+            bundle.putString("id", id );
+            bundle.putString("email", email );
+            bundle.putString("fullName", fullName );
+            bundle.putString("username", userName );
+            bundle.putString("contact", contact );
+            bundle.putString("brand", brand );
+            bundle.putString("emergency", emergency );
+            intent.putExtras(bundle);
             startActivity(intent);
-            finish();
+//            finish();
         }
     }
 
@@ -322,7 +384,8 @@ public class LoginPage extends AppCompatActivity {
 
             // get value from LL Json Object
             value=user.getString("id"); //<< get value here
-//            String firstname = user.getString("sFirstname");
+            String firstname = user.getString("sFirstname");
+            Log.d("Current User",firstname);
 //            String lastname = user.getString("sLastname");
 //            fullName = firstname + " " + lastname;
 //

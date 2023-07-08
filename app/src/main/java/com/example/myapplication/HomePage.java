@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -31,7 +32,19 @@ public class HomePage extends AppCompatActivity {
             } else if (itemId == R.id.notifications) {
                 replaceFragment(new NotificationsFragment());
             } else if (itemId == R.id.profile) {
-                replaceFragment(new ProfileFragment());
+                Bundle extras = getIntent().getExtras();
+                String id = null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
+                if (extras != null) {
+                    email = extras.getString("email");
+                    fullName = extras.getString("fullName");
+                    userName = extras.getString("username");
+                    contact = extras.getString("contact");
+                    brand = extras.getString("brand");
+                    emergency = extras.getString("emergency");
+
+                    Log.d("Current User Email",userName);
+                }
+                replaceFragment(new ProfileFragment(email, fullName, userName, contact, brand, emergency));
             }
 
             return true;
