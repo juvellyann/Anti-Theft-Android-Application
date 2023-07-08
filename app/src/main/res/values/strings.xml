@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello Blank fragment</string>
+    <string name="firstname_input">First Name</string>
+    <string name="lastname_input">Last Name</string>
+    <string name="username_input">Username</string>
+    <string name="email_input">Email</string>
+    <string name="contactNo_input">Contact no.</string>
+    <string name="password_input">Password</string>
+    <string name="reEnterPassword_input">Re-enter Password</string>
+    <string name="brand_input">Brand and Model</string>
+    <string name="signUp_title">SIGN UP</string>
+    <string name="loginButtonText">LOGIN</string>
+    <string name="SignUpButtonText">SIGN UP</string>
+    <string name="ChangePasswordButton">Change Password</string>
+    <string name="LogOutButton">Log out</string>
+    <string name="parking_mode">Parking Mode</string>
+    <string name="battery_life">Battery Life</string>
+    <string name="engine_immobilizer">Engine Immobilizer</string>
+    <string name="locationTitle">LOCATION</string>
+    <string name="GetLocationButton">Get Location</string>
+    <string name="ProfileHeader">PROFILE</string>
+    <string name="loginUsername">Name</string>
+</resources>
