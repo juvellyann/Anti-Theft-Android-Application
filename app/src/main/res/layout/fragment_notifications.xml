@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/black">
+    android:orientation="vertical">
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#EFEFEF"
-    tools:context=".NotificationsFragment">
-
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Notifications Page" />
+        android:layout_height="wrap_content"
+        android:text="Notifications Page"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:background="@color/black"
+        android:id="@+id/notificationsTitle"
+        />
 
-</FrameLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ListView
+        android:id="@+id/notificationListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:padding="8dp"
+        tools:listitem="@layout/notification_item" />
+
+</LinearLayout>

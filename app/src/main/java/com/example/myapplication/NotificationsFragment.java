@@ -1,12 +1,30 @@
 package com.example.myapplication;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,16 +32,11 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class NotificationsFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    static ArrayList<Notification> notifications = new ArrayList<>();
+    Button disturbanceButton, batteryButton;
+    NotificationAdapter nadapter;
+    static private HttpRequestTask httpRequestTask;
+    boolean isHttpRequestExecuted = false;
     public NotificationsFragment() {
         // Required empty public constructor
     }
@@ -40,25 +53,108 @@ public class NotificationsFragment extends Fragment {
     public static NotificationsFragment newInstance(String param1, String param2) {
         NotificationsFragment fragment = new NotificationsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(httpRequestTask == null){
+            httpRequestTask = new HttpRequestTask();
+            httpRequestTask.execute();
+        }
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_notifications, container, false);
+        ListView listView = rootView.findViewById(R.id.notificationListView);
+        nadapter = new NotificationAdapter(getActivity(),notifications,getFragmentManager());
+        listView.setAdapter(nadapter);
+        return rootView;
+    }
+
+    class HttpRequestTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+
+                // Create a URL object with the endpoint you want to make the request to
+                URL url = new URL("http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=getDevice&did=1");
+
+                // Create an HttpURLConnection object
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                // Set the request method (GET, POST, etc.)
+                connection.setRequestMethod("GET");
+
+                // Get the response code
+                int responseCode = connection.getResponseCode();
+
+                // Read the response
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                // Disconnect the connection
+                connection.disconnect();
+
+                // Return the response data
+                return response.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String responseData) {
+            super.onPostExecute(responseData);
+
+            if (responseData != null) {
+                Log.d("Get Device", responseData);
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(responseData);
+                    JSONObject deviceObject = jsonObject.getJSONObject("device");
+
+                    // Get the values of disturbance and isBattery
+                    int disturbance = deviceObject.getInt("iDisturbance");
+                    int battery = deviceObject.getInt("iBattery");
+                    notifications.clear();
+                    if(disturbance == 0){
+                        notifications.add(new Notification("Disturbance", "Disturbance Detected "));
+                        nadapter.notifyDataSetChanged();
+                    }
+
+                    if(battery >= 20){
+                        notifications.add(new Notification("Battery", "Battery Low "));
+                        nadapter.notifyDataSetChanged();
+                    }
+                    isHttpRequestExecuted = true;
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            } else {
+                // Handle the case when the request fails
+            }
+        }
     }
 }
