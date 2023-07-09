@@ -125,7 +125,7 @@ public class NotificationsFragment extends Fragment {
         @Override
         protected void onPostExecute(String responseData) {
             super.onPostExecute(responseData);
-
+            NotificationHelper.createNotificationChannel(getContext());
             if (responseData != null) {
                 Log.d("Get Device", responseData);
                 JSONObject jsonObject = null;
@@ -139,6 +139,7 @@ public class NotificationsFragment extends Fragment {
                     notifications.clear();
                     if(disturbance == 0){
                         notifications.add(new Notification("Disturbance", "Disturbance Detected "));
+                        NotificationHelper.showNotification(getContext(),"Disturbance","Disturbance Detected");
                         nadapter.notifyDataSetChanged();
                     }
 
