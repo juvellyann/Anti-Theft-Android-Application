@@ -68,6 +68,7 @@ public class LoginPage extends AppCompatActivity {
     TextView edit;
     Button signUp, login;
     String loginUrl;
+    boolean isLogged = false;
     private FirebaseAuth mAuth;
     // Initialize Firebase Auth
     private Executor executor;
@@ -92,6 +93,9 @@ public class LoginPage extends AppCompatActivity {
         signUp = findViewById(R.id.SignUpBtn);
         login = findViewById(R.id.LoginBtn);
         edit = findViewById(R.id.edit);
+
+        username.setText("johndoe");
+        password.setText("mypassword");
 
 
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -291,6 +295,7 @@ public class LoginPage extends AppCompatActivity {
                         if(json.getString("status") == "error"){
                             Log.d("Logged Message","Login Failed");
                         }else{
+                            isLogged = true;
                             Log.d("Logged Message","Login Success");
                             Log.d("Current User",user.getString("sFirstname"));
 
@@ -339,17 +344,25 @@ public class LoginPage extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            Intent intent = new Intent(LoginPage.this, HomePage.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("id", id );
-            bundle.putString("email", email );
-            bundle.putString("fullName", fullName );
-            bundle.putString("username", userName );
-            bundle.putString("contact", contact );
-            bundle.putString("brand", brand );
-            bundle.putString("emergency", emergency );
-            intent.putExtras(bundle);
-            startActivity(intent);
+            if(isLogged){
+                Intent intent = new Intent(LoginPage.this, HomePage.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", id );
+                bundle.putString("email", email );
+                bundle.putString("fullName", fullName );
+                bundle.putString("username", userName );
+                bundle.putString("contact", contact );
+                bundle.putString("brand", brand );
+                bundle.putString("emergency", emergency );
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }else{
+                Toast.makeText(getApplicationContext(), "Authentication failed",
+                                Toast.LENGTH_SHORT)
+                        .show();
+            }
+            Log.d("User", o.toString());
+
 //            finish();
         }
     }
