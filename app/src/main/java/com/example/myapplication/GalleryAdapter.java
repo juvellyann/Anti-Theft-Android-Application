@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -41,6 +42,17 @@ public class GalleryAdapter extends ArrayAdapter<Image> {
         TextView title = listItem.findViewById(R.id.tvTitle);
         title.setText(currentItem.dateTime);
 
+        listItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Open full screen activity with the clicked image
+                Intent intent = new Intent(getContext(), FullScreenImageActivity.class);
+                intent.putExtra("imageUrl", currentItem.img);
+                getContext().startActivity(intent);
+            }
+        });
+
         return listItem;
     }
+
 }
