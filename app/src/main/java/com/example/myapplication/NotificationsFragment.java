@@ -75,8 +75,8 @@ public class NotificationsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_notifications, container, false);
-//        ProgressBar loadingIndicator = rootView.findViewById(R.id.loadingIndicator);
-//        new NotificationsFragment.HttpRequestTask(loadingIndicator).execute();
+        ProgressBar loadingIndicator = rootView.findViewById(R.id.loadingIndicator);
+        new NotificationsFragment.HttpRequestTask(loadingIndicator).execute();
         ListView listView = rootView.findViewById(R.id.notificationListView);
         nadapter = new NotificationAdapter(getActivity(),notifications,getFragmentManager());
         listView.setAdapter(nadapter);
