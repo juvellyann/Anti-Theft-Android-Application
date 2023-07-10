@@ -40,8 +40,9 @@ public class GalleryAdapter extends ArrayAdapter<Image> {
 //        picture.setBackgroundResource(currentItem.getPicture());
 //
         TextView title = listItem.findViewById(R.id.tvTitle);
-        title.setText(currentItem.dateTime);
-
+        TextView subtitle = listItem.findViewById(R.id.tvSubtitle);
+        title.setText(currentItem.getDate());
+        subtitle.setText(currentItem.getTime());
         listItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

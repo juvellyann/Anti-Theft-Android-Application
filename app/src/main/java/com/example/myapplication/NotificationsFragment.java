@@ -37,7 +37,6 @@ public class NotificationsFragment extends Fragment {
     Button disturbanceButton, batteryButton;
     NotificationAdapter nadapter;
     static private HttpRequestTask httpRequestTask;
-    boolean isHttpRequestExecuted = false;
     public NotificationsFragment() {
         // Required empty public constructor
     }
@@ -61,11 +60,9 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(httpRequestTask == null){
-            ProgressBar loadingIndicator = getView().findViewById(R.id.loadingIndicator);
-            httpRequestTask = new NotificationsFragment.HttpRequestTask(loadingIndicator);
-            httpRequestTask.execute();
-        }
+        ProgressBar loadingIndicator = getView().findViewById(R.id.loadingIndicator);
+        httpRequestTask = new NotificationsFragment.HttpRequestTask(loadingIndicator);
+        httpRequestTask.execute();
     }
 
     @Override
@@ -163,7 +160,6 @@ public class NotificationsFragment extends Fragment {
                         notifications.add(new Notification("Battery", "Battery Low "));
                         nadapter.notifyDataSetChanged();
                     }
-                    isHttpRequestExecuted = true;
 
                 } catch (JSONException e) {
                     throw new RuntimeException(e);

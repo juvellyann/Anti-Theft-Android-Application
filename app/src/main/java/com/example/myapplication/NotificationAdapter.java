@@ -4,15 +4,19 @@ import static androidx.core.content.ContentProviderCompat.requireContext;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -69,16 +73,16 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
                 }
             });
         } else {
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, // Set width to MATCH_PARENT
+                    LinearLayout.LayoutParams.MATCH_PARENT  // Set height to MATCH_PARENT
+            );
             button1.setVisibility(View.GONE);
-            button2.setVisibility(View.VISIBLE);
-            button2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Delete the notification from the list
-                    notifications.remove(notification);
-                    notifyDataSetChanged();
-                }
-            });
+            button2.setVisibility(View.GONE);
+            notificationTitle.setTextColor(Color.RED);
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.notificationIcon);
+            notificationTitle.setLayoutParams(layoutParams);
         }
 
         return convertView;

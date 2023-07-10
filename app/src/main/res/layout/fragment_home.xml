@@ -13,8 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="250dp"
+        android:layout_gravity="center"
         android:background="@drawable/shape">
 
         <TextView
@@ -29,19 +28,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <androidx.appcompat.widget.SwitchCompat-->
-<!--            android:id="@+id/switchCompat"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:textOff="Off"-->
-<!--            android:textOn="On"-->
-<!--            android:thumb="@drawable/thumb_switch"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/BatteryLifeText"-->
-<!--            app:showText="true"-->
-<!--            app:track="@drawable/track_switch" />-->
+        <!--        <androidx.appcompat.widget.SwitchCompat-->
+        <!--            android:id="@+id/switchCompat"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="10dp"-->
+        <!--            android:textOff="Off"-->
+        <!--            android:textOn="On"-->
+        <!--            android:thumb="@drawable/thumb_switch"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/BatteryLifeText"-->
+        <!--            app:showText="true"-->
+        <!--            app:track="@drawable/track_switch" />-->
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/EngineImmobilizerSwitch"
@@ -65,19 +64,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/EngineImmobilizerSwitch" />
 
-<!--        <androidx.appcompat.widget.SwitchCompat-->
-<!--            android:id="@+id/ParkSwitch"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:textOff="Off"-->
-<!--            android:textOn="On"-->
-<!--            android:thumb="@drawable/thumb_switch"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/ParkingModeText"-->
-<!--            app:showText="true"-->
-<!--            app:track="@drawable/track_switch" />-->
+        <!--        <androidx.appcompat.widget.SwitchCompat-->
+        <!--            android:id="@+id/ParkSwitch"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="10dp"-->
+        <!--            android:textOff="Off"-->
+        <!--            android:textOn="On"-->
+        <!--            android:thumb="@drawable/thumb_switch"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/ParkingModeText"-->
+        <!--            app:showText="true"-->
+        <!--            app:track="@drawable/track_switch" />-->
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/ParkingModeSwitch"
@@ -110,7 +109,7 @@
             android:layout_marginBottom="20dp"
             android:text=""
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

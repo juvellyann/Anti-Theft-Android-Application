@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -15,6 +16,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -33,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -90,6 +95,7 @@ public class HomeFragment extends Fragment {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
 //        }
+        new HttpRequestTask().execute();
     }
 
     @Override
@@ -269,6 +275,80 @@ public class HomeFragment extends Fragment {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    class HttpRequestTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+
+                // Create a URL object with the endpoint you want to make the request to
+                URL url = new URL("http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=getDevice&did=1");
+
+                // Create an HttpURLConnection object
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                // Set the request method (GET, POST, etc.)
+                connection.setRequestMethod("GET");
+
+                // Get the response code
+                int responseCode = connection.getResponseCode();
+
+                // Read the response
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                // Disconnect the connection
+                connection.disconnect();
+
+                // Return the response data
+                return response.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String responseData) {
+            super.onPostExecute(responseData);
+
+            if (responseData != null) {
+                Log.d("HTTP Response", responseData);
+                // Process the response data as needed
+                JSONObject responseJson = null;
+                try {
+                    responseJson = new JSONObject(responseData);
+                    JSONObject deviceJson = responseJson.getJSONObject("device");
+                    String iBattery = deviceJson.getString("iBattery");
+                    try {
+                        int bat = Integer.parseInt(iBattery);
+                        if(bat <= 20){
+                            batteryLife.setTextColor(Color.RED);
+                        }else{
+                            batteryLife.setTextColor(Color.GREEN);
+                        }
+                    }catch(Exception e){
+
+                    }
+                    Log.d("IBATTERY",iBattery);
+                    batteryLife.setText(iBattery+"%");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+            } else {
+                // Handle the case when the request fails
+            }
         }
     }
 }

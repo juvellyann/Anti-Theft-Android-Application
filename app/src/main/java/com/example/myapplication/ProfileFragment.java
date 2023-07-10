@@ -42,7 +42,7 @@ public class ProfileFragment extends Fragment {
 //    private String mParam2;
 
     String id = null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
-    Button edit;
+    Button edit,logout;
     TextView Email, Username, FullName, ContactNo, Brand, EmergencyContactNum;
 
     public ProfileFragment(String id) {
@@ -121,6 +121,7 @@ public class ProfileFragment extends Fragment {
         new HttpRequestTask().execute();
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         edit = view.findViewById(R.id.changePasswordBtn);
+        logout = view.findViewById(R.id.logOutBtn);
 
 
         Email = (TextView) view.findViewById(R.id.EmailText);
@@ -148,6 +149,14 @@ public class ProfileFragment extends Fragment {
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 1);
             }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the new activity here
+                getActivity().finish();
+            };
         });
 
 
