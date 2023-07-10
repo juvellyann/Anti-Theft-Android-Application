@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,6 +43,8 @@ public class GalleryFragment extends Fragment {
     ArrayList<Image> fileName = new ArrayList<>();
     ArrayList<Image> sfileName = new ArrayList<>();
     ImageView imageView;
+
+
     GalleryAdapter gadapter;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,7 +80,7 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new HttpRequestTask().execute();
+
 
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
@@ -90,7 +93,8 @@ public class GalleryFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
-
+        ProgressBar loadingIndicator = rootView.findViewById(R.id.loadingIndicator);
+        new HttpRequestTask(loadingIndicator).execute();
         Spinner monthSpinner = rootView.findViewById(R.id.monthSpinner);
 
         // Create an ArrayAdapter with month items
@@ -165,7 +169,17 @@ public class GalleryFragment extends Fragment {
 
     }
     class HttpRequestTask extends AsyncTask<Void, Void, String> {
+        private ProgressBar loadingIndicator;
 
+        public HttpRequestTask(ProgressBar loadingIndicator) {
+            this.loadingIndicator = loadingIndicator;
+        }
+        @Override
+        protected void onPreExecute() {
+            // Show the loading indicator before starting the background task
+
+            loadingIndicator.setVisibility(View.VISIBLE);
+        }
         @Override
         protected String doInBackground(Void... voids) {
             try {
@@ -206,7 +220,7 @@ public class GalleryFragment extends Fragment {
         @Override
         protected void onPostExecute(String responseData) {
             super.onPostExecute(responseData);
-
+            loadingIndicator.setVisibility(View.GONE);
             if (responseData != null) {
                 Log.d("Gallery", responseData);
                 // Process the response data as needed

@@ -32,6 +32,7 @@
         <activity android:name=".HomePage"/>
         <activity android:name=".SignUpPage"/>
         <activity android:name=".FullScreenImageActivity" />
+        <activity android:name=".EditDetails" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

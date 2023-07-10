@@ -33,18 +33,11 @@ public class HomePage extends AppCompatActivity {
                 replaceFragment(new NotificationsFragment());
             } else if (itemId == R.id.profile) {
                 Bundle extras = getIntent().getExtras();
-                String id = null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
+                String id = null;
                 if (extras != null) {
-                    email = extras.getString("email");
-                    fullName = extras.getString("fullName");
-                    userName = extras.getString("username");
-                    contact = extras.getString("contact");
-                    brand = extras.getString("brand");
-                    emergency = extras.getString("emergency");
-
-                    Log.d("Current User Email",userName);
+                    id = extras.getString("id");
                 }
-                replaceFragment(new ProfileFragment(email, fullName, userName, contact, brand, emergency));
+                replaceFragment(new ProfileFragment(id));
             }
 
             return true;

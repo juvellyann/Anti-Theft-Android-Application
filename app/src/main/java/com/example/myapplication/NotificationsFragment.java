@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,10 +61,6 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(httpRequestTask == null){
-            httpRequestTask = new HttpRequestTask();
-            httpRequestTask.execute();
-        }
 
     }
 
@@ -77,6 +74,8 @@ public class NotificationsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_notifications, container, false);
+        ProgressBar loadingIndicator = rootView.findViewById(R.id.loadingIndicator);
+        new NotificationsFragment.HttpRequestTask(loadingIndicator).execute();
         ListView listView = rootView.findViewById(R.id.notificationListView);
         nadapter = new NotificationAdapter(getActivity(),notifications,getFragmentManager());
         listView.setAdapter(nadapter);
@@ -84,7 +83,18 @@ public class NotificationsFragment extends Fragment {
     }
 
     class HttpRequestTask extends AsyncTask<Void, Void, String> {
+        private ProgressBar loadingIndicator;
 
+        public HttpRequestTask(ProgressBar loadingIndicator) {
+            this.loadingIndicator = loadingIndicator;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // Show the loading indicator before starting the background task
+
+            loadingIndicator.setVisibility(View.VISIBLE);
+        }
         @Override
         protected String doInBackground(Void... voids) {
             try {
@@ -125,6 +135,8 @@ public class NotificationsFragment extends Fragment {
         @Override
         protected void onPostExecute(String responseData) {
             super.onPostExecute(responseData);
+            loadingIndicator.setVisibility(View.GONE);
+
             NotificationHelper.createNotificationChannel(getContext());
             if (responseData != null) {
                 Log.d("Get Device", responseData);
