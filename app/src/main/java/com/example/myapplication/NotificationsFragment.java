@@ -138,7 +138,6 @@ public class NotificationsFragment extends Fragment {
             super.onPostExecute(responseData);
             loadingIndicator.setVisibility(View.GONE);
 
-            NotificationHelper.createNotificationChannel(getContext());
             if (responseData != null) {
                 Log.d("Get Device", responseData);
                 JSONObject jsonObject = null;
@@ -150,13 +149,12 @@ public class NotificationsFragment extends Fragment {
                     int disturbance = deviceObject.getInt("iDisturbance");
                     int battery = deviceObject.getInt("iBattery");
                     notifications.clear();
-                    if(disturbance == 0){
+                    if(disturbance > 0){
                         notifications.add(new Notification("Disturbance", "Disturbance Detected "));
-                        NotificationHelper.showNotification(getContext(),"Disturbance","Disturbance Detected");
                         nadapter.notifyDataSetChanged();
                     }
 
-                    if(battery >= 20){
+                    if(battery <= 20){
                         notifications.add(new Notification("Battery", "Battery Low "));
                         nadapter.notifyDataSetChanged();
                     }

@@ -240,7 +240,7 @@ public class GalleryFragment extends Fragment {
                         // For example, you can create objects or store the values in a list
                         // or use them as needed in your application
                         Log.d("Image Id",id+"");
-                        fileName.add(new Image(id,filename,dateTime));
+                        fileName.add(0,new Image(id,filename,dateTime));
                     }
                     sfileName.addAll(fileName);
                     gadapter.notifyDataSetChanged();

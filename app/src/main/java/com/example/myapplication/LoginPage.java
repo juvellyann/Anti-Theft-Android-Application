@@ -130,11 +130,11 @@ public class LoginPage extends AppCompatActivity {
                     @NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
                 new LoginUser().execute("johndoe","mypassword");
-                Intent intent = new Intent(LoginPage.this, HomePage.class);
-                startActivity(intent);
-                finish();
-                Toast.makeText(getApplicationContext(),
-                        "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(LoginPage.this, HomePage.class);
+//                startActivity(intent);
+//                finish();
+//                Toast.makeText(getApplicationContext(),
+//                        "Authentication succeeded!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
