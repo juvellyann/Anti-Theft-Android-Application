@@ -1,7 +1,13 @@
 package com.example.myapplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -65,7 +71,8 @@ public class HomeFragment extends Fragment {
     MaterialSwitch checkSwitch, checkEngine;
     TextView batteryLife;
     String setParking = null, setEngine = null, deviceId = null;
-
+    int iParking, iEngine;
+    boolean isConnectedToArduino = false;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -109,9 +116,36 @@ public class HomeFragment extends Fragment {
         checkEngine = (MaterialSwitch) view.findViewById(R.id.EngineImmobilizerSwitch);
         batteryLife = (TextView) view.findViewById(R.id.batteryLife);
 
+//        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        String ssidName = wifiManager.getConnectionInfo().getSSID();
+//        ssidName = ssidName.replace("\"","");
+//        Log.d("SSID NAME", ssidName);
+//
+//        if(ssidName.equals("Anti-thief")) {
+//            isConnectedToArduino = true;
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//            builder.setTitle("Warning");
+//            builder.setMessage("");
+//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    // Call a method to override the values from the database
+//                }
+//            });
+//            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    // Call a method to override the values from the database
+//                    getActivity().finish();
+//                }
+//            });
+//            AlertDialog dialog = builder.create();
+//            dialog.show();
+//        }
 
         Info info = new Info();
         info.execute(deviceId);
+
 
         checkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -147,7 +181,11 @@ public class HomeFragment extends Fragment {
         protected Object doInBackground(Object[] objects) {
             try{
                 String parkingMode = objects[0].toString();
-                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setParking&status="+ parkingMode +"&did=1";
+                if(isConnectedToArduino){
+                    linkUrl = "";
+                }else {
+                    linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setParking&status=" + parkingMode + "&did=1";
+                }
                 URL url = new URL(linkUrl);
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet();
@@ -178,7 +216,11 @@ public class HomeFragment extends Fragment {
         protected Object doInBackground(Object[] objects) {
             try{
                 String engine = objects[0].toString();
-                linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setEngine&status="+engine+"&did=1";
+                if(isConnectedToArduino){
+                    linkUrl = "";
+                }else {
+                    linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setEngine&status=" + engine + "&did=1";
+                }
                 URL url = new URL(linkUrl);
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet();
@@ -329,6 +371,12 @@ public class HomeFragment extends Fragment {
                     responseJson = new JSONObject(responseData);
                     JSONObject deviceJson = responseJson.getJSONObject("device");
                     String iBattery = deviceJson.getString("iBattery");
+                    String iEngineStr = deviceJson.getString("iEngine");
+                    String iParkingStr = deviceJson.getString("iParking");
+                    iEngine = Integer.parseInt(iEngineStr);
+                    iParking = Integer.parseInt(iParkingStr);
+                    checkSwitch.setChecked(iParking == 1? true:false);
+                    checkEngine.setChecked(iEngine == 1? true:false);
                     try {
                         int bat = Integer.parseInt(iBattery);
                         if(bat <= 20){

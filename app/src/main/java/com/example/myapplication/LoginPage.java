@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,7 +80,6 @@ public class LoginPage extends AppCompatActivity {
     String value = "";
     String linkUrl = "";
     String id=null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstance){
@@ -172,6 +172,19 @@ public class LoginPage extends AppCompatActivity {
                 String email, Password;
                 email = String.valueOf(username.getText());
                 Password = String.valueOf(password.getText());
+
+
+
+//                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//                String ssidName = wifiManager.getConnectionInfo().getSSID();
+//                ssidName = ssidName.replace("\"","");
+//                Log.d("SSID NAME", ssidName);
+//
+//                if(ssidName.equals("Anti-thief")){
+//                    Intent intent = new Intent(LoginPage.this, HomePage.class);
+//                    startActivity(intent);
+//                    return;
+//                }
 
                 if(email.isEmpty()){
                     username.setError("Email is required");
@@ -354,6 +367,7 @@ public class LoginPage extends AppCompatActivity {
                 bundle.putString("contact", contact );
                 bundle.putString("brand", brand );
                 bundle.putString("emergency", emergency );
+
                 intent.putExtras(bundle);
                 startActivity(intent);
             }else{
