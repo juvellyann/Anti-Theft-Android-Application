@@ -77,7 +77,7 @@ public class LocationFragment extends Fragment {
             public void onMapReady(@NonNull GoogleMap gMap) {
 
                 googleMap = gMap;
-                LatLng latLng = new LatLng(37.7749, -122.4194); // Set the initial location coordinates
+                LatLng latLng = new LatLng(10.2967, 123.9065); // Set the initial location coordinates
 
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -86,17 +86,7 @@ public class LocationFragment extends Fragment {
                 googleMap.clear();
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
                 googleMap.addMarker(markerOptions);
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(@NonNull LatLng latLng) {
-                        MarkerOptions markerOptions = new MarkerOptions();
-                        markerOptions.position(latLng);
-                        markerOptions.title(latLng.latitude+" KG " + latLng.longitude);
-                        googleMap.clear();
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
-                        googleMap.addMarker(markerOptions);
-                    }
-                });
+
             }
         });
 //        return inflater.inflate(R.layout.fragment_location, container, false);
@@ -161,20 +151,12 @@ public class LocationFragment extends Fragment {
                     LatLng newLatLng = new LatLng(latitude, longitude);
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12));
                     googleMap.clear();
-                    googleMap.addMarker(new MarkerOptions().position(newLatLng).title("New Location"));
+                    googleMap.addMarker(new MarkerOptions().position(newLatLng).title("Your Device"));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
 
 
-
-                // Update the UI if necessary
-                // getActivity().runOnUiThread(new Runnable() {
-                //     @Override
-                //     public void run() {
-                //         // Update the UI with the response data
-                //     }
-                // });
             } else {
                 // Handle the case when the request fails
             }

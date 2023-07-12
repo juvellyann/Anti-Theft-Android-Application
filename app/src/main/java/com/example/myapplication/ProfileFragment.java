@@ -1,17 +1,23 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,15 +42,12 @@ public class ProfileFragment extends Fragment {
 //    private String mParam2;
 
     String id = null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
+    Button edit,logout;
+    TextView Email, Username, FullName, ContactNo, Brand, EmergencyContactNum;
 
-    public ProfileFragment(String email, String fullName, String userName, String contact, String brand, String emergency) {
+    public ProfileFragment(String id) {
         // Required empty public constructor
-        this.email = email;
-        this.fullName = fullName;
-        this.userName = userName;
-        this.contact = contact;
-        this.brand = brand;
-        this.emergency = emergency;
+        this.id = id;
     }
 
     public String setMyArgument(String Id) {
@@ -78,6 +81,26 @@ public class ProfileFragment extends Fragment {
 //        return fragment;
 //    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == 1) {
+            // Retrieve the data from the Intent
+            fullName = data.getStringExtra("fullName");
+            userName = data.getStringExtra("username");
+            contact = data.getStringExtra("contact");
+            brand = data.getStringExtra("brand");
+            emergency = data.getStringExtra("emergency");
+
+            Email.setText(email);
+            FullName.setText(fullName);
+            ContactNo.setText(contact);
+            Username.setText(userName);
+            Brand.setText(brand);
+            EmergencyContactNum.setText(emergency);
+        }
+    }
 
 
     @Override
@@ -95,12 +118,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
-//        LoginPage loginPage = new LoginPage();
-//        String link = this.getArguments().getString("link");
+        new HttpRequestTask().execute();
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        TextView Email, Username, FullName, ContactNo, Brand, EmergencyContactNum;
+        edit = view.findViewById(R.id.changePasswordBtn);
+        logout = view.findViewById(R.id.logOutBtn);
 
 
         Email = (TextView) view.findViewById(R.id.EmailText);
@@ -112,63 +133,112 @@ public class ProfileFragment extends Fragment {
 
         String okayId = setMyArgument(email);
 
-//        Bundle bundle = this.getArguments();
-//
-//        email = bundle.getString("email");
-//        fullName = bundle.getString("fullName");
-//        username = bundle.getString("username");
-//        contact = bundle.getString("contact");
-//        brand = bundle.getString("brand");
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the new activity here
+                Intent intent = new Intent(getActivity(), EditDetails.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("id", id );
+                bundle.putString("email", email );
+                bundle.putString("fullName", fullName );
+                bundle.putString("username", userName );
+                bundle.putString("contact", contact );
+                bundle.putString("brand", brand );
+                bundle.putString("emergency", emergency );
+                intent.putExtras(bundle);
+                startActivityForResult(intent, 1);
+            }
+        });
 
-//        Email.setText(email);
-//        Username.setText(username);
-//        FullName.setText(fullName);
-//        ContactNo.setText(contact);
-//        Brand.setText(brand);
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("User");
-        //DatabaseReference reference;
-
-        Email.setText(email);
-        FullName.setText(fullName);
-        ContactNo.setText(contact);
-        Username.setText(userName);
-        Brand.setText(brand);
-        EmergencyContactNum.setText(emergency);
-        //reference = FirebaseDatabase.getInstance().getReference().child("User");
-
-
-        //Log.i("responseText", responseText);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the new activity here
+                getActivity().finish();
+            };
+        });
 
 
 
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                String email = snapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Email").getValue(String.class);
-//                String username = snapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Username").getValue(String.class);
-//                String firstName = snapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("FirstName").getValue(String.class);
-//                String lastName = snapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("LastName").getValue(String.class);
-//                String contactNo= snapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("ContactNo").getValue(String.class);
-//                String brand = snapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Brand").getValue(String.class);
-//
-//                Email.setText(email);
-//                Username.setText(username);
-//                FullName.setText(firstName + " " + lastName);
-//                ContactNo.setText(contactNo);
-//                Brand.setText(brand);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
         return view;
     }
 
     private void UserDetails(){
         LoginPage loginPage = new LoginPage();
+    }
+
+    class HttpRequestTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+
+                // Create a URL object with the endpoint you want to make the request to
+                URL url = new URL("http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=read&id="+id);
+
+                // Create an HttpURLConnection object
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                // Set the request method (GET, POST, etc.)
+                connection.setRequestMethod("GET");
+
+                // Get the response code
+                int responseCode = connection.getResponseCode();
+
+                // Read the response
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                // Disconnect the connection
+                connection.disconnect();
+
+                // Return the response data
+                return response.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String responseData) {
+            super.onPostExecute(responseData);
+
+            if (responseData != null) {
+                Log.d("HTTP Response", responseData);
+                // Process the response data as needed
+                try {
+                    JSONObject user = new JSONObject(responseData);
+                    id = user.getString("id");
+                    String lastname = user.getString("sLastname");
+                    String firstname = user.getString("sFirstname");
+                    fullName = firstname + " " + lastname;
+                    email = user.getString("sEmail");
+                    userName = user.getString("sUsername");
+                    contact = user.getString("sContact");
+                    brand = user.getString("sModel");
+                    emergency = user.getString("sEContact");
+                    Email.setText(email);
+                    FullName.setText(fullName);
+                    ContactNo.setText(contact);
+                    Username.setText(userName);
+                    Brand.setText(brand);
+                    EmergencyContactNum.setText(emergency);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                Log.d("My User", responseData);
+            } else {
+                // Handle the case when the request fails
+            }
+        }
     }
 }
 

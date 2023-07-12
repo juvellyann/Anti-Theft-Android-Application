@@ -66,39 +66,73 @@
                 app:layout_constraintTop_toBottomOf="@+id/NameText" />
 
             <TextView
+                android:id="@+id/usernameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:text="Username:"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/EmailText" />
+
+            <TextView
                 android:id="@+id/UsernameText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/background_text_profile"
                 android:gravity="center"
                 android:text=""
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/EmailText" />
+                app:layout_constraintTop_toBottomOf="@+id/usernameLabel" />
+
+            <TextView
+                android:id="@+id/contactNumberLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:text="Contact Number:"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/UsernameText" />
 
             <TextView
                 android:id="@+id/NumberText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/background_text_profile"
                 android:gravity="center"
                 android:text=""
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/UsernameText" />
+                app:layout_constraintTop_toBottomOf="@+id/contactNumberLabel" />
+
+
+            <TextView
+                android:id="@+id/motorcycleTypeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:text="Motorcycle Type:"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/NumberText" />
 
             <TextView
                 android:id="@+id/motorcycleTypeText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/background_text_profile"
                 android:gravity="center"
@@ -106,14 +140,26 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/NumberText" />
+                app:layout_constraintTop_toBottomOf="@+id/motorcycleTypeLabel" />
+
+
+            <TextView
+                android:id="@+id/emergencyContactLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:text="Emergency Contact Number:"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/motorcycleTypeText" />
 
             <TextView
                 android:id="@+id/EmergencyContactText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/background_text_profile"
                 android:gravity="center"
@@ -121,7 +167,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/motorcycleTypeText" />
+                app:layout_constraintTop_toBottomOf="@+id/emergencyContactLabel" />
+
 
             <Button
                 android:id="@+id/changePasswordBtn"
@@ -129,10 +176,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="120dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="120dp"
-                android:text="@string/ChangePasswordButton"
+                android:text="Edit Profile"
                 android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@+id/logOutBtn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +192,23 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="120dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginEnd="120dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/LogOutButton"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@+id/cheat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/changePasswordBtn" />
+
+            <Button
+                android:id="@+id/cheat"
+                style="@style/Widget.Material3.Button.ElevatedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="120dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="120dp"
                 android:layout_marginBottom="32dp"
                 android:text="@string/LogOutButton"
@@ -153,8 +217,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/changePasswordBtn" />
-
+                app:layout_constraintTop_toBottomOf="@+id/logOutBtn"
+                android:visibility="invisible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

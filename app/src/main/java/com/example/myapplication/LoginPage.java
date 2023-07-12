@@ -92,7 +92,6 @@ public class LoginPage extends AppCompatActivity {
         password = findViewById(R.id.InputPassword);
         signUp = findViewById(R.id.SignUpBtn);
         login = findViewById(R.id.LoginBtn);
-        edit = findViewById(R.id.edit);
 
         username.setText("johndoe");
         password.setText("mypassword");
@@ -130,11 +129,12 @@ public class LoginPage extends AppCompatActivity {
             public void onAuthenticationSucceeded(
                     @NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                Intent intent = new Intent(LoginPage.this, HomePage.class);
-                startActivity(intent);
-                finish();
-                Toast.makeText(getApplicationContext(),
-                        "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+                new LoginUser().execute("johndoe","mypassword");
+//                Intent intent = new Intent(LoginPage.this, HomePage.class);
+//                startActivity(intent);
+//                finish();
+//                Toast.makeText(getApplicationContext(),
+//                        "Authentication succeeded!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
