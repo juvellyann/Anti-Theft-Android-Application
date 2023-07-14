@@ -149,7 +149,7 @@ public class LocationFragment extends Fragment {
                     double longitude = Double.parseDouble(coordinates[1]);
 
                     LatLng newLatLng = new LatLng(latitude, longitude);
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 12));
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 20));
                     googleMap.clear();
                     googleMap.addMarker(new MarkerOptions().position(newLatLng).title("Your Device"));
                 } catch (JSONException e) {
