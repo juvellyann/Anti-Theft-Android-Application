@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -144,14 +145,21 @@ public class LocationFragment extends Fragment {
                     responseJson = new JSONObject(responseData);
                     JSONObject deviceJson = responseJson.getJSONObject("device");
                     String sGeoLocation = deviceJson.getString("sGeoLocation");
-                    String[] coordinates = sGeoLocation.split(",");
-                    double latitude = Double.parseDouble(coordinates[0]);
-                    double longitude = Double.parseDouble(coordinates[1]);
-
-                    LatLng newLatLng = new LatLng(latitude, longitude);
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 20));
-                    googleMap.clear();
-                    googleMap.addMarker(new MarkerOptions().position(newLatLng).title("Your Device"));
+                    if(!sGeoLocation.equals("")) {
+                        String[] coordinates = sGeoLocation.split(",");
+                        double latitude = Double.parseDouble(coordinates[0]);
+                        double longitude = Double.parseDouble(coordinates[1]);
+                        if(isValidLatLng(latitude,longitude)) {
+                            LatLng newLatLng = new LatLng(latitude, longitude);
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, 20));
+                            googleMap.clear();
+                            googleMap.addMarker(new MarkerOptions().position(newLatLng).title("Your Device"));
+                    }else{
+                            Toast.makeText(getContext(),"Location not found", Toast.LENGTH_LONG).show();
+                        }
+                    }else{
+                        Toast.makeText(getContext(),"Location not found", Toast.LENGTH_LONG).show();
+                    }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -160,6 +168,18 @@ public class LocationFragment extends Fragment {
             } else {
                 // Handle the case when the request fails
             }
+        }
+
+        public boolean isValidLatLng(double lat, double lng){
+            if(lat < -90 || lat > 90)
+            {
+                return false;
+            }
+            else if(lng < -180 || lng > 180)
+            {
+                return false;
+            }
+            return true;
         }
     }
 

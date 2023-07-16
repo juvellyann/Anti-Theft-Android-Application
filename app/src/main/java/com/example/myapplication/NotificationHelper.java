@@ -28,7 +28,7 @@ public class NotificationHelper {
         }
     }
 
-    public static void showNotification(Context context, String title, String content) {
+    public static void showNotification(Context context, String title, String content, int id) {
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
@@ -46,6 +46,6 @@ public class NotificationHelper {
                 .setAutoCancel(true);
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
-        manager.notify(1, builder.build());
+        manager.notify(id, builder.build());
     }
 }
