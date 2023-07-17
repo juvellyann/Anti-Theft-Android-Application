@@ -12,15 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import com.squareup.picasso.Picasso;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,6 +86,14 @@ public class GalleryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        if(!connectionHelper.haveNetworkConnection()){
+            View view = inflater.inflate(R.layout.no_internet_message, container, false);
+            TextView ttl = view.findViewById(R.id.noNetTtl);
+            ttl.setVisibility(View.VISIBLE);
+            ttl.setText("Gallery");
+            return view;
+        }
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
         ProgressBar loadingIndicator = rootView.findViewById(R.id.loadingIndicator);

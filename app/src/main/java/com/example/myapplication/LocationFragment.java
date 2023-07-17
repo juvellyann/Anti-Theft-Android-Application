@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,43 +56,55 @@ public class LocationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Button getLocationBtn;
-        View view = inflater.inflate(R.layout.fragment_location,container,false);
-        getLocationBtn = view.findViewById(R.id.button);
+        ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        Log.d("Connection Helper", connectionHelper.haveNetworkConnection()+"");
 
-        getLocationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle button click here
-                // Perform any action or launch other activities/fragments
-                Log.d("Click Test","HI");
-                new HttpRequestTask().execute();
-            }
-        });
+        if(!connectionHelper.haveNetworkConnection()){
+            View view = inflater.inflate(R.layout.no_internet_message, container, false);
+            TextView ttl = view.findViewById(R.id.noNetTtl);
+            ttl.setVisibility(View.VISIBLE);
+            ttl.setText("Location");
+            return view;
+        }else{
+            View view = inflater.inflate(R.layout.fragment_location,container,false);
+
+            Button getLocationBtn;
+            getLocationBtn = view.findViewById(R.id.button);
+
+            getLocationBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Handle button click here
+                    // Perform any action or launch other activities/fragments
+                    Log.d("Click Test","HI");
+                    new HttpRequestTask().execute();
+                }
+            });
 
 
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.My_Map);
-        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.My_Map);
+            supportMapFragment.getMapAsync(new OnMapReadyCallback() {
 
 
-            @Override
-            public void onMapReady(@NonNull GoogleMap gMap) {
+                @Override
+                public void onMapReady(@NonNull GoogleMap gMap) {
 
-                googleMap = gMap;
-                LatLng latLng = new LatLng(10.2967, 123.9065); // Set the initial location coordinates
+                    googleMap = gMap;
+                    LatLng latLng = new LatLng(10.2967, 123.9065); // Set the initial location coordinates
 
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title(latLng.latitude+" KG " + latLng.longitude);
-                googleMap.clear();
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
-                googleMap.addMarker(markerOptions);
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(latLng);
+                    markerOptions.title(latLng.latitude+" KG " + latLng.longitude);
+                    googleMap.clear();
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
+                    googleMap.addMarker(markerOptions);
 
-            }
-        });
-//        return inflater.inflate(R.layout.fragment_location, container, false);
-        return view;
+                }
+            });
+            return view;
+
+        }
     }
 
     class HttpRequestTask extends AsyncTask<Void, Void, String> {

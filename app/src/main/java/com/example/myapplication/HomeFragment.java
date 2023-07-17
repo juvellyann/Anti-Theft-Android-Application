@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -72,9 +73,14 @@ public class HomeFragment extends Fragment {
     TextView batteryLife;
     String setParking = null, setEngine = null, deviceId = null;
     int iParking, iEngine;
-    boolean isConnectedToArduino = false;
+    boolean isConnectedToArduino = false, isLocal;
     public HomeFragment() {
         // Required empty public constructor
+    }
+
+    public HomeFragment(boolean isLocal) {
+        // Required empty public constructor
+        this.isLocal = isLocal;
     }
 
 //    /**
@@ -102,7 +108,7 @@ public class HomeFragment extends Fragment {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
 //        }
-        new HttpRequestTask().execute();
+
     }
 
     @Override
@@ -121,7 +127,7 @@ public class HomeFragment extends Fragment {
 //        ssidName = ssidName.replace("\"","");
 //        Log.d("SSID NAME", ssidName);
 //
-//        if(ssidName.equals("Anti-thief")) {
+//        if(isLocal) {
 //            isConnectedToArduino = true;
 //            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 //            builder.setTitle("Warning");
@@ -142,6 +148,20 @@ public class HomeFragment extends Fragment {
 //            AlertDialog dialog = builder.create();
 //            dialog.show();
 //        }
+        ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        if(isLocal || !connectionHelper.haveNetworkConnection()){
+            SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+            int iParking = sharedPref.getInt("iParking", -1);
+            int iEngine = sharedPref.getInt("iEngine", -1);
+            Log.d("iParking", iParking+"");
+            Log.d("iParking", iParking+"");
+            if(iParking != -1 && iEngine != -1){
+                checkSwitch.setChecked(iParking == 1);
+                checkEngine.setChecked(iEngine == 1);
+            }
+        }else{
+            new HttpRequestTask().execute();
+        }
 
         Info info = new Info();
         info.execute(deviceId);
@@ -155,6 +175,10 @@ public class HomeFragment extends Fragment {
                 } else {
                     setParking = "0";
                 }
+                SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putInt("iParking", Integer.parseInt(setParking));
+                editor.apply();
                 SetParking setPark = new SetParking();
                 setPark.execute(setParking);
             }
@@ -168,6 +192,10 @@ public class HomeFragment extends Fragment {
                 } else {
                     setEngine = "0";
                 }
+                SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putInt("iEngine", Integer.parseInt(setEngine));
+                editor.apply();
                 SetEngine setEngineImmobilizer = new SetEngine();
                 setEngineImmobilizer.execute(setEngine);
             }
@@ -243,6 +271,7 @@ public class HomeFragment extends Fragment {
                 return new String(e.getMessage());
             }
         }
+
     }
 
     public class Info extends AsyncTask {
@@ -375,8 +404,13 @@ public class HomeFragment extends Fragment {
                     String iParkingStr = deviceJson.getString("iParking");
                     iEngine = Integer.parseInt(iEngineStr);
                     iParking = Integer.parseInt(iParkingStr);
-                    checkSwitch.setChecked(iParking == 1? true:false);
-                    checkEngine.setChecked(iEngine == 1? true:false);
+                    checkSwitch.setChecked(iParking == 1);
+                    checkEngine.setChecked(iEngine == 1);
+                    SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putInt("iParking", iEngine);
+                    editor.putInt("iEngine", iParking);
+                    editor.apply();
                     try {
                         int bat = Integer.parseInt(iBattery);
                         if(bat <= 20){

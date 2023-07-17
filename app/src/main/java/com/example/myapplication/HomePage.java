@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,20 +41,25 @@ public class HomePage extends AppCompatActivity {
             public void run() {
                 new HttpRequestTask().execute();
             }
-        }, 0, 500);
+        }, 0, 1000);
         t.schedule(new TimerTask() {
             @Override
             public void run() {
                 new BatteryHttpTask().execute();
             }
-        }, 0, 500);
+        }, 0, 1000);
 
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
             int itemId = item.getItemId();
             if (itemId == R.id.home) {
-                replaceFragment(new HomeFragment());
+                Bundle extras = getIntent().getExtras();
+                boolean isLocal = false;
+                if(extras != null){
+                    isLocal = extras.getBoolean("isLocal");
+                }
+                replaceFragment(new HomeFragment(isLocal));
             } else if (itemId == R.id.location) {
                 replaceFragment(new LocationFragment());
             } else if (itemId == R.id.gallery) {
@@ -141,6 +148,10 @@ public class HomePage extends AppCompatActivity {
                             NotificationHelper.showNotification(HomePage.this,"Disturbance","Disturbance Detected",1);
                             hasShown = true;
                             Log.d("TimerTask",iDisturbance);
+                            SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("disturbanceVal",Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putInt("iDisturbance", 1);
+                            editor.apply();
                         }
                     }else{
                         hasShown = false;
@@ -214,7 +225,7 @@ public class HomePage extends AppCompatActivity {
                     int flag = Integer.parseInt(iBattery);
                     if(flag < 20){
                         if(!hasShownBatt){
-                            NotificationHelper.showNotification(HomePage.this,"Battery Low","Please Charge Now",2);
+                            NotificationHelper.showNotification(HomePage.this,"Battery Low","Warning: Battery is getting low!",2);
                             hasShownBatt = true;
                             Log.d("TimerTask",iBattery);
                         }

@@ -3,6 +3,7 @@ package com.example.myapplication;
 import static androidx.core.content.ContentProviderCompat.requireContext;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -66,6 +67,9 @@ public class NotificationAdapter extends ArrayAdapter<Notification> {
                 public void onClick(View v) {
                     // Delete the notification from the list
                     Fragment fragment = new GalleryFragment();
+                    SharedPreferences preferences = context.getSharedPreferences("disturbanceVal",Context.MODE_PRIVATE);
+                    preferences.edit().remove("iDisturbance").apply();
+                    Log.d("Preference", preferences.getInt("iDisturbance",-1) + "");
                     fragmentManager.beginTransaction()
                             .replace(R.id.frame_layout, fragment)
                             .addToBackStack(null)

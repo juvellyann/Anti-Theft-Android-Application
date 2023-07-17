@@ -118,6 +118,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        if(!connectionHelper.haveNetworkConnection()){
+            View view = inflater.inflate(R.layout.no_internet_message, container, false);
+            TextView ttl = view.findViewById(R.id.noNetTtl);
+            ttl.setVisibility(View.VISIBLE);
+            ttl.setText("Profile");
+            return view;
+        }
         new HttpRequestTask().execute();
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         edit = view.findViewById(R.id.changePasswordBtn);

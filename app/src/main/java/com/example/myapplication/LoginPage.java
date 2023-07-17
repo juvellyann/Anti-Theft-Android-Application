@@ -3,6 +3,8 @@ package com.example.myapplication;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,11 +59,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.concurrent.Executor;
 
 public class LoginPage extends AppCompatActivity {
@@ -86,7 +91,7 @@ public class LoginPage extends AppCompatActivity {
         super.onCreate(savedInstance);
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.login_page);
-        FirebaseApp.initializeApp(LoginPage.this);
+
 
         username = findViewById(R.id.InputUsername);
         password = findViewById(R.id.InputPassword);
@@ -166,14 +171,21 @@ public class LoginPage extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //to remove
+                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
+                Log.d("Connection Helper", connectionHelper+"");
+                if(!connectionHelper.haveNetworkConnection()){
+                    Intent intent = new Intent(LoginPage.this, HomePage.class);
+                    startActivity(intent);
+                    return;
+                }
+
                 //String userId = username.getText().toString().trim();
                 //String Password = password.getText().toString().trim();
 
                 String email, Password;
                 email = String.valueOf(username.getText());
                 Password = String.valueOf(password.getText());
-
-
 
 //                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //                String ssidName = wifiManager.getConnectionInfo().getSSID();
@@ -185,6 +197,14 @@ public class LoginPage extends AppCompatActivity {
 //                    startActivity(intent);
 //                    return;
 //                }
+
+                boolean isLocal = pingNetwork("192.168.4.1");
+                if(isLocal){
+                    Intent intent = new Intent(LoginPage.this, HomePage.class);
+                    intent.putExtra("isLocal", isLocal);
+                    startActivity(intent);
+                    return;
+                }
 
                 if(email.isEmpty()){
                     username.setError("Email is required");
@@ -441,4 +461,19 @@ public class LoginPage extends AppCompatActivity {
     public String getValue() {
         return value;
     }
+
+    public boolean pingNetwork(String ipAddress){
+        boolean reachable = false;
+       try {
+           Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 -w 1 "+ipAddress);
+           reachable = (p1.waitFor() == 0);
+       }catch (Exception e){
+           e.printStackTrace();
+           Log.d("Ping","e");
+           reachable = false;
+       }
+        Log.d("Ping",reachable+"");
+        return reachable;
+    }
+
 }

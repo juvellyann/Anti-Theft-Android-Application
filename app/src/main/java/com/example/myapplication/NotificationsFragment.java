@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -14,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,10 +62,12 @@ public class NotificationsFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ProgressBar loadingIndicator = getView().findViewById(R.id.loadingIndicator);
-        httpRequestTask = new NotificationsFragment.HttpRequestTask(loadingIndicator);
-        httpRequestTask.execute();
+        super.onActivityCreated(savedInstanceState);ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        if(connectionHelper.haveNetworkConnection()){
+            ProgressBar loadingIndicator = getView().findViewById(R.id.loadingIndicator);
+            httpRequestTask = new NotificationsFragment.HttpRequestTask(loadingIndicator);
+            httpRequestTask.execute();
+        }
     }
 
     @Override
@@ -74,6 +79,14 @@ public class NotificationsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        if(!connectionHelper.haveNetworkConnection()){
+            View view = inflater.inflate(R.layout.no_internet_message, container, false);
+            TextView ttl = view.findViewById(R.id.noNetTtl);
+            ttl.setVisibility(View.VISIBLE);
+            ttl.setText("Notifications");
+            return view;
+        }
         View rootView = inflater.inflate(R.layout.fragment_notifications, container, false);
         ProgressBar loadingIndicator = rootView.findViewById(R.id.loadingIndicator);
         new NotificationsFragment.HttpRequestTask(loadingIndicator).execute();
@@ -149,7 +162,10 @@ public class NotificationsFragment extends Fragment {
                     int disturbance = deviceObject.getInt("iDisturbance");
                     int battery = deviceObject.getInt("iBattery");
                     notifications.clear();
-                    if(disturbance > 0){
+                    SharedPreferences sharedPref = getActivity().getSharedPreferences("disturbanceVal",Context.MODE_PRIVATE);
+                    int disturbanceStore = sharedPref.getInt("iDisturbance", -1);
+                    Log.d("Preference", disturbanceStore + " in notif fragment");
+                    if(disturbance > 0 || disturbanceStore == 1){
                         notifications.add(new Notification("Disturbance", "Disturbance Detected "));
                         nadapter.notifyDataSetChanged();
                     }
