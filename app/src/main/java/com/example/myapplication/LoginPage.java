@@ -172,13 +172,13 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //to remove
-                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
-                Log.d("Connection Helper", connectionHelper+"");
-                if(!connectionHelper.haveNetworkConnection()){
-                    Intent intent = new Intent(LoginPage.this, HomePage.class);
-                    startActivity(intent);
-                    return;
-                }
+//                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
+//                Log.d("Connection Helper", connectionHelper+"");
+//                if(!connectionHelper.haveNetworkConnection()){
+//                    Intent intent = new Intent(LoginPage.this, HomePage.class);
+//                    startActivity(intent);
+//                    return;
+//                }
 
                 //String userId = username.getText().toString().trim();
                 //String Password = password.getText().toString().trim();

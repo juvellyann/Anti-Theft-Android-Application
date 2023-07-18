@@ -122,11 +122,8 @@ public class HomeFragment extends Fragment {
         checkEngine = (MaterialSwitch) view.findViewById(R.id.EngineImmobilizerSwitch);
         batteryLife = (TextView) view.findViewById(R.id.batteryLife);
 
-//        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//        String ssidName = wifiManager.getConnectionInfo().getSSID();
-//        ssidName = ssidName.replace("\"","");
-//        Log.d("SSID NAME", ssidName);
-//
+
+
 //        if(isLocal) {
 //            isConnectedToArduino = true;
 //            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -148,6 +145,8 @@ public class HomeFragment extends Fragment {
 //            AlertDialog dialog = builder.create();
 //            dialog.show();
 //        }
+
+
         ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
         if(isLocal || !connectionHelper.haveNetworkConnection()){
             SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
@@ -210,7 +209,7 @@ public class HomeFragment extends Fragment {
             try{
                 String parkingMode = objects[0].toString();
                 if(isConnectedToArduino){
-                    linkUrl = "";
+                    linkUrl = "http://192.168.4.1/setStatus?cmd=park="+((parkingMode=="1")?"on":"off");;
                 }else {
                     linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setParking&status=" + parkingMode + "&did=1";
                 }
@@ -245,7 +244,7 @@ public class HomeFragment extends Fragment {
             try{
                 String engine = objects[0].toString();
                 if(isConnectedToArduino){
-                    linkUrl = "";
+                    linkUrl = "http://192.168.4.1/setStatus?cmd=park="+((engine=="1")?"on":"off");
                 }else {
                     linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setEngine&status=" + engine + "&did=1";
                 }
