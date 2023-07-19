@@ -76,7 +76,7 @@ public class LoginPage extends AppCompatActivity {
     TextView edit;
     Button signUp, login;
     String loginUrl;
-    boolean isLogged = false;
+    boolean isLogged = false, isParkingLoading = true, isEngineLoading = true, isLoginLoading = false;
     private FirebaseAuth mAuth;
     // Initialize Firebase Auth
     private Executor executor;
@@ -87,13 +87,14 @@ public class LoginPage extends AppCompatActivity {
     String value = "";
     String linkUrl = "";
     String id=null, email = null, fullName = null, userName = null, contact= null, brand = null, emergency = null;
-
+    AlertDialog.Builder builder;
+    AlertDialog dialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstance){
         super.onCreate(savedInstance);
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.login_page);
-
+        builder = new AlertDialog.Builder(this);
         SharedPreferences sharedPref = this.getSharedPreferences("override",Context.MODE_PRIVATE);
         int iParkingOverride = sharedPref.getInt("iParking", -1);
         int iEngineOverride = sharedPref.getInt("iEngine", -1);
@@ -101,11 +102,14 @@ public class LoginPage extends AppCompatActivity {
         Log.d("Override iEngine", iEngineOverride+"");
 
         if(iParkingOverride != -1 && iEngineOverride != -1){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setView(R.layout.loading_dialog_view);
-            builder.setTitle("Syncing");
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            new SetEngine().execute(iEngineOverride+"");
+            new SetParking().execute(iParkingOverride+"");
+            if(isEngineLoading && isParkingLoading) {
+                builder.setView(R.layout.loading_dialog_view);
+                builder.setTitle("Syncing");
+                dialog = builder.create();
+                dialog.show();
+            }
         }
 
 
@@ -241,8 +245,11 @@ public class LoginPage extends AppCompatActivity {
                     return;
                 }
                 //loginUser(email, Password);
-                LoginUser loginUser = new LoginUser();
-                loginUser.execute(email,Password);
+                if(!isLoginLoading) {
+                    isLoginLoading = true;
+                    LoginUser loginUser = new LoginUser();
+                    loginUser.execute(email, Password);
+                }
             }
         });
 
@@ -388,6 +395,7 @@ public class LoginPage extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            isLoginLoading = false;
             if(isLogged){
                 Intent intent = new Intent(LoginPage.this, HomePage.class);
                 Bundle bundle = new Bundle();
@@ -510,9 +518,22 @@ public class LoginPage extends AppCompatActivity {
                 }
 
                 in.close();
+
                 return sb.toString();
             } catch (Exception e){
                 return new String(e.getMessage());
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            isParkingLoading = false;
+            if(!isEngineLoading && !isParkingLoading) {
+                dialog.hide();
+                SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("override",Context.MODE_PRIVATE);
+                sharedPref.edit().remove("iParking").apply();
+                sharedPref.edit().remove("iEngine").apply();
             }
         }
     }
@@ -541,13 +562,25 @@ public class LoginPage extends AppCompatActivity {
                     break;
                 }
 
+                Log.d("Loading",isEngineLoading+"");
                 in.close();
                 return sb.toString();
             } catch (Exception e){
                 return new String(e.getMessage());
             }
         }
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            isEngineLoading = false;
+            if(!isEngineLoading && !isParkingLoading) {
+                dialog.hide();
+                SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("override",Context.MODE_PRIVATE);
+                sharedPref.edit().remove("iParking").apply();
+                sharedPref.edit().remove("iEngine").apply();
 
+            }
+        }
     }
 
 }
