@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -91,6 +93,20 @@ public class LoginPage extends AppCompatActivity {
         super.onCreate(savedInstance);
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.login_page);
+
+        SharedPreferences sharedPref = this.getSharedPreferences("override",Context.MODE_PRIVATE);
+        int iParkingOverride = sharedPref.getInt("iParking", -1);
+        int iEngineOverride = sharedPref.getInt("iEngine", -1);
+        Log.d("Override iParking", iParkingOverride+"");
+        Log.d("Override iEngine", iEngineOverride+"");
+
+        if(iParkingOverride != -1 && iEngineOverride != -1){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(R.layout.loading_dialog_view);
+            builder.setTitle("Syncing");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
 
 
         username = findViewById(R.id.InputUsername);
@@ -212,11 +228,6 @@ public class LoginPage extends AppCompatActivity {
                     return;
                 }
 
-//                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-//                    username.setError("Please enter valid email");
-//                    username.requestFocus();
-//                    return;
-//                }
 
                 if(Password.isEmpty()){
                     password.setError("Password is required");
@@ -474,6 +485,69 @@ public class LoginPage extends AppCompatActivity {
        }
         Log.d("Ping",reachable+"");
         return reachable;
+    }
+
+    public class SetParking extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try{
+                String parkingMode = objects[0].toString();
+                    linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setParking&status=" + parkingMode + "&did=1";
+                URL url = new URL(linkUrl);
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet();
+                request.setURI(new URI(linkUrl));
+                HttpResponse response = client.execute(request);
+                BufferedReader in = new BufferedReader(new
+                        InputStreamReader(response.getEntity().getContent()));
+
+                StringBuffer sb = new StringBuffer("");
+                String line="";
+
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+
+                in.close();
+                return sb.toString();
+            } catch (Exception e){
+                return new String(e.getMessage());
+            }
+        }
+    }
+
+    public class SetEngine extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try{
+                String engine = objects[0].toString();
+                    linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setEngine&status=" + engine + "&did=1";
+
+                URL url = new URL(linkUrl);
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet();
+                request.setURI(new URI(linkUrl));
+                HttpResponse response = client.execute(request);
+                BufferedReader in = new BufferedReader(new
+                        InputStreamReader(response.getEntity().getContent()));
+
+                StringBuffer sb = new StringBuffer("");
+                String line="";
+
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+
+                in.close();
+                return sb.toString();
+            } catch (Exception e){
+                return new String(e.getMessage());
+            }
+        }
+
     }
 
 }
