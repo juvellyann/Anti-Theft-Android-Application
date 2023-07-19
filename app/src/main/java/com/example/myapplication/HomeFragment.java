@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment {
                 hasModalShown = true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("No Internet Connection");
-                builder.setMessage("Further actions will override your last settings. G?");
+                builder.setMessage("Further actions will override your last settings. Continue?");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -248,7 +248,7 @@ public class HomeFragment extends Fragment {
             try{
                 String engine = objects[0].toString();
                 if(isConnectedToArduino){
-                    linkUrl = "http://192.168.4.1/setStatus?cmd=park="+((engine=="1")?"on":"off");
+                    linkUrl = "http://192.168.4.1/setStatus?cmd=engine="+((engine=="1")?"on":"off");
                 }else {
                     linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setEngine&status=" + engine + "&did=1";
                 }
