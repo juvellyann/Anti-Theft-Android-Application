@@ -172,7 +172,7 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //to remove
-//                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
+                ConnectionHelper connectionHelper = new ConnectionHelper(getApplicationContext());
 //                Log.d("Connection Helper", connectionHelper+"");
 //                if(!connectionHelper.haveNetworkConnection()){
 //                    Intent intent = new Intent(LoginPage.this, HomePage.class);
@@ -199,7 +199,7 @@ public class LoginPage extends AppCompatActivity {
 //                }
 
                 boolean isLocal = pingNetwork("192.168.4.1");
-                if(isLocal){
+                if(isLocal || !connectionHelper.haveNetworkConnection()){
                     Intent intent = new Intent(LoginPage.this, HomePage.class);
                     intent.putExtra("isLocal", isLocal);
                     startActivity(intent);

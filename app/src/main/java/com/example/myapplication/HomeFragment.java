@@ -122,32 +122,33 @@ public class HomeFragment extends Fragment {
         checkEngine = (MaterialSwitch) view.findViewById(R.id.EngineImmobilizerSwitch);
         batteryLife = (TextView) view.findViewById(R.id.batteryLife);
 
-
-
-//        if(isLocal) {
-//            isConnectedToArduino = true;
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//            builder.setTitle("Warning");
-//            builder.setMessage("");
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    // Call a method to override the values from the database
-//                }
-//            });
-//            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    // Call a method to override the values from the database
-//                    getActivity().finish();
-//                }
-//            });
-//            AlertDialog dialog = builder.create();
-//            dialog.show();
-//        }
-
-
         ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+
+
+        if(isLocal || !connectionHelper.haveNetworkConnection()) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("No Internet Connection");
+            builder.setMessage("Further actions will override your last settings. G?");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Call a method to override the values from the database
+                    isConnectedToArduino = true;
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Call a method to override the values from the database
+                    getActivity().finish();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+
         if(isLocal || !connectionHelper.haveNetworkConnection()){
             SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
             int iParking = sharedPref.getInt("iParking", -1);
@@ -174,7 +175,8 @@ public class HomeFragment extends Fragment {
                 } else {
                     setParking = "0";
                 }
-                SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+                String toWhere = (isConnectedToArduino)?"override":"options";
+                SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iParking", Integer.parseInt(setParking));
                 editor.apply();
@@ -191,7 +193,8 @@ public class HomeFragment extends Fragment {
                 } else {
                     setEngine = "0";
                 }
-                SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+                String toWhere = (isConnectedToArduino)?"override":"options";
+                SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iEngine", Integer.parseInt(setEngine));
                 editor.apply();
