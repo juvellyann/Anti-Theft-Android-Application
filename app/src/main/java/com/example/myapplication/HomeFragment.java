@@ -73,15 +73,11 @@ public class HomeFragment extends Fragment {
     TextView batteryLife;
     String setParking = null, setEngine = null, deviceId = null;
     int iParking, iEngine;
-    boolean isConnectedToArduino = false, isLocal;
+    boolean isConnectedToArduino = false, local;
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    public HomeFragment(boolean isLocal) {
-        // Required empty public constructor
-        this.isLocal = isLocal;
-    }
 
 //    /**
 //     * Use this factory method to create a new instance of
@@ -123,9 +119,9 @@ public class HomeFragment extends Fragment {
         batteryLife = (TextView) view.findViewById(R.id.batteryLife);
 
         ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
+        boolean local = connectionHelper.pingNetwork("192.168.4.1");
 
-
-        if(isLocal || !connectionHelper.haveNetworkConnection()) {
+        if(local) {
             if(!hasModalShown) {
                 hasModalShown = true;
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -142,6 +138,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Call a method to override the values from the database
+                        hasModalShown = false;
                         getActivity().finish();
                     }
                 });
@@ -150,7 +147,7 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        if(isLocal || !connectionHelper.haveNetworkConnection()){
+        if(local){
             SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
             int iParking = sharedPref.getInt("iParking", -1);
             int iEngine = sharedPref.getInt("iEngine", -1);
@@ -176,7 +173,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     setParking = "0";
                 }
-                String toWhere = (isConnectedToArduino)?"override":"options";
+                String toWhere = (local)?"override":"options";
                 SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iParking", Integer.parseInt(setParking));
@@ -194,7 +191,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     setEngine = "0";
                 }
-                String toWhere = (isConnectedToArduino)?"override":"options";
+                String toWhere = (local)?"override":"options";
                 SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iEngine", Integer.parseInt(setEngine));

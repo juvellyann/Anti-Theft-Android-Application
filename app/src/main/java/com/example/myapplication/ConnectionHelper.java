@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 public class ConnectionHelper {
     Context context;
@@ -26,5 +27,19 @@ public class ConnectionHelper {
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    public boolean pingNetwork(String ipAddress){
+        boolean reachable = false;
+        try {
+            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 -w 1 "+ipAddress);
+            reachable = (p1.waitFor() == 0);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Ping","e");
+            reachable = false;
+        }
+        Log.d("Ping",reachable+"");
+        return reachable;
     }
 }

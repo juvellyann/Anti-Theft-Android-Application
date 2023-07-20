@@ -1,7 +1,16 @@
 package com.example.myapplication;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -47,5 +56,58 @@ public class Image {
         }
 
         return formattedTime;
+    }
+
+    public void deleteImageFromDb(int did){
+        ImageHTTP imageHTTP = new ImageHTTP();
+        imageHTTP.execute(id+"",did+"");
+    }
+}
+
+class ImageHTTP extends AsyncTask {
+
+    @Override
+    protected String doInBackground(Object[] objects) {
+        try {
+
+            // Create a URL object with the endpoint you want to make the request to
+            String imgId = objects[0].toString();
+            String did = objects[1].toString();
+            URL url = new URL("http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=deleteImg&img="+imgId+"&did="+did);
+
+            // Create an HttpURLConnection object
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Set the request method (GET, POST, etc.)
+            connection.setRequestMethod("GET");
+
+            // Get the response code
+            int responseCode = connection.getResponseCode();
+
+            // Read the response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Disconnect the connection
+            connection.disconnect();
+
+            // Return the response data
+            return response.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+
     }
 }

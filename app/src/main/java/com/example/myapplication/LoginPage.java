@@ -218,10 +218,9 @@ public class LoginPage extends AppCompatActivity {
 //                    return;
 //                }
 
-                boolean isLocal = pingNetwork("192.168.4.1");
-                if(isLocal || !connectionHelper.haveNetworkConnection()){
+                boolean isLocal = connectionHelper.pingNetwork("192.168.4.1");
+                if(isLocal){
                     Intent intent = new Intent(LoginPage.this, HomePage.class);
-                    intent.putExtra("isLocal", isLocal);
                     startActivity(intent);
                     return;
                 }
@@ -418,81 +417,6 @@ public class LoginPage extends AppCompatActivity {
 
 //            finish();
         }
-    }
-
-    public void GetUserInfo(String link){
-
-        HttpResponse response = null;
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet();
-            request.setURI(new URI(
-                    link));
-            response = client.execute(request);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String responseText = null;
-        try {
-            // Convert String to json object
-            responseText = EntityUtils.toString(response.getEntity());
-            JSONObject json = new JSONObject(responseText);
-
-            // get LL json object
-            JSONObject user = json.getJSONObject("user");
-
-            // get value from LL Json Object
-            value=user.getString("id"); //<< get value here
-            String firstname = user.getString("sFirstname");
-            Log.d("Current User",firstname);
-//            String lastname = user.getString("sLastname");
-//            fullName = firstname + " " + lastname;
-//
-//            email = user.getString("sEmail");
-//            userName = user.getString("sUsername");
-//            contact = user.getString("sContact");
-//            brand = user.getString("sModel");
-
-//            ProfileFragment fragInfo = new ProfileFragment();
-//            fragInfo.setArguments(bundle);
-//            getSupportFragmentManager().beginTransaction().replace(R.id.profile, fragInfo).commit();
-
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            Log.i("Parse Exception", e + "");
-
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //Log.i("responseText", responseText);
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public boolean pingNetwork(String ipAddress){
-        boolean reachable = false;
-       try {
-           Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 -w 1 "+ipAddress);
-           reachable = (p1.waitFor() == 0);
-       }catch (Exception e){
-           e.printStackTrace();
-           Log.d("Ping","e");
-           reachable = false;
-       }
-        Log.d("Ping",reachable+"");
-        return reachable;
     }
 
     public class SetParking extends AsyncTask {

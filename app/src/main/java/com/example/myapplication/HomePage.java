@@ -54,12 +54,7 @@ public class HomePage extends AppCompatActivity {
 
             int itemId = item.getItemId();
             if (itemId == R.id.home) {
-                Bundle extras = getIntent().getExtras();
-                boolean isLocal = false;
-                if(extras != null){
-                    isLocal = extras.getBoolean("isLocal");
-                }
-                replaceFragment(new HomeFragment(isLocal));
+                replaceFragment(new HomeFragment());
             } else if (itemId == R.id.location) {
                 replaceFragment(new LocationFragment());
             } else if (itemId == R.id.gallery) {
@@ -242,4 +237,6 @@ public class HomePage extends AppCompatActivity {
             }
         }
     }
+
+
 }
