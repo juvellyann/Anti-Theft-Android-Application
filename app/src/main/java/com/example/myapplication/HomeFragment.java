@@ -158,7 +158,6 @@ public class HomeFragment extends Fragment {
                         SharedPreferences sharedPref = getContext().getSharedPreferences("override",Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.remove("pending").apply();
-                        Object data = new OverrideHttp().execute().get();
                         if(iParking != -1 && iEngine != -1){
                             checkSwitch.setChecked(iParking == 1);
                             checkEngine.setChecked(iEngine == 1);
@@ -169,6 +168,13 @@ public class HomeFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     // Call a method to override the values from the database
+                                    try {
+                                        Object data = new OverrideHttp().execute().get();
+                                    } catch (ExecutionException e) {
+                                        throw new RuntimeException(e);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                     Intent intent = new Intent(getContext(), LoginPage.class);
                                     startActivity(intent);
                                     getActivity().finish();
@@ -183,9 +189,7 @@ public class HomeFragment extends Fragment {
                             AlertDialog dialog = builder.create();
                             dialog.show();
                         }
-                    } catch (ExecutionException e) {
-                        throw new RuntimeException(e);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
 
