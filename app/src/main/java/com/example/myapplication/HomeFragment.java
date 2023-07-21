@@ -132,6 +132,15 @@ public class HomeFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // Call a method to override the values from the database
                         isConnectedToArduino = true;
+                        SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+                        int iParking = sharedPref.getInt("iParking", -1);
+                        int iEngine = sharedPref.getInt("iEngine", -1);
+                        Log.d("Override iParking", iParking+"");
+                        Log.d("Override iEngine", iEngine+"");
+                        if(iParking != -1 && iEngine != -1){
+                            checkSwitch.setChecked(iParking == 1);
+                            checkEngine.setChecked(iEngine == 1);
+                        }
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -139,6 +148,8 @@ public class HomeFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // Call a method to override the values from the database
                         hasModalShown = false;
+                        isConnectedToArduino = false;
+
                         getActivity().finish();
                     }
                 });
@@ -147,18 +158,10 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        if(local){
-            SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
-            int iParking = sharedPref.getInt("iParking", -1);
-            int iEngine = sharedPref.getInt("iEngine", -1);
-            Log.d("iParking", iParking+"");
-            Log.d("iParking", iParking+"");
-            if(iParking != -1 && iEngine != -1){
-                checkSwitch.setChecked(iParking == 1);
-                checkEngine.setChecked(iEngine == 1);
-            }
-        }else{
+        if(connectionHelper.haveNetworkConnection()){
             new HttpRequestTask().execute();
+
+        }else{
         }
 
         Info info = new Info();
@@ -173,13 +176,17 @@ public class HomeFragment extends Fragment {
                 } else {
                     setParking = "0";
                 }
-                String toWhere = (local)?"override":"options";
+                String toWhere = (isConnectedToArduino)?"override":"options";
                 SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iParking", Integer.parseInt(setParking));
                 editor.apply();
                 SetParking setPark = new SetParking();
-                setPark.execute(setParking);
+                try {
+                    Object res = setPark.execute(setParking).get();
+                    Log.d("Parking Setting",res.toString());
+                }catch (Exception e) {
+                }
             }
         });
 
@@ -191,13 +198,17 @@ public class HomeFragment extends Fragment {
                 } else {
                     setEngine = "0";
                 }
-                String toWhere = (local)?"override":"options";
+                String toWhere = (isConnectedToArduino)?"override":"options";
                 SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iEngine", Integer.parseInt(setEngine));
                 editor.apply();
                 SetEngine setEngineImmobilizer = new SetEngine();
-                setEngineImmobilizer.execute(setEngine);
+                try {
+                    Object res = setEngineImmobilizer.execute(setEngine).get();
+                    Log.d("Engine Setting",res.toString());
+                }catch (Exception e) {
+                }
             }
         });
         return view;
@@ -272,6 +283,11 @@ public class HomeFragment extends Fragment {
             }
         }
 
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+
+        }
     }
 
     public class Info extends AsyncTask {
@@ -287,10 +303,7 @@ public class HomeFragment extends Fragment {
                 request.setURI(new URI(linkUrl));
                 HttpResponse response = client.execute(request);
                 BufferedReader in = new BufferedReader(new
-                        InputStreamReader(response.getEntity().getContent()));
-
-                GetInfo();
-
+                InputStreamReader(response.getEntity().getContent()));
                 StringBuffer sb = new StringBuffer("");
                 String line="";
 
@@ -307,47 +320,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public void GetInfo(){
-        HttpResponse response = null;
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet();
-            request.setURI(new URI(
-                    linkHomeInfo));
-            response = client.execute(request);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String responseText = null;
-        try {
-            // Convert String to json object
-            responseText = EntityUtils.toString(response.getEntity());
-            JSONObject json = new JSONObject(responseText);
-
-            // get LL json object
-            JSONObject user = json.getJSONObject("device");
-
-            String value=user.getString("iBattery"); //<< get value here
-            batteryLife.setText(value);
-
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            Log.i("Parse Exception", e + "");
-
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     class HttpRequestTask extends AsyncTask<Void, Void, String> {
 
@@ -408,8 +380,10 @@ public class HomeFragment extends Fragment {
                     checkEngine.setChecked(iEngine == 1);
                     SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putInt("iParking", iEngine);
-                    editor.putInt("iEngine", iParking);
+                    editor.putInt("iParking", iParking);
+                    editor.apply();
+
+                    editor.putInt("iEngine", iEngine);
                     editor.apply();
                     try {
                         int bat = Integer.parseInt(iBattery);

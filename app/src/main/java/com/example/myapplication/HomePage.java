@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -28,6 +29,8 @@ import java.util.TimerTask;
 public class HomePage extends AppCompatActivity {
     ActivityMainBinding binding;
     boolean hasShown = false, hasShownBatt = false;
+    AlertDialog.Builder builder;
+    AlertDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +38,34 @@ public class HomePage extends AppCompatActivity {
         NotificationHelper.createNotificationChannel(this);
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
+
+//        builder = new AlertDialog.Builder(this);
+//        SharedPreferences sharedPref = this.getSharedPreferences("override",Context.MODE_PRIVATE);
+//        int iParkingOverride = sharedPref.getInt("iParking", -1);
+//        int iEngineOverride = sharedPref.getInt("iEngine", -1);
+//        Log.d("Override iParking", iParkingOverride+"");
+//        Log.d("Override iEngine", iEngineOverride+"");
+//
+//        if(iParkingOverride != -1 && iEngineOverride != -1){
+//            boolean flag = OverrideSettings.override(iParkingOverride+"",iEngineOverride+"");
+////            new OverrideSettings().SetEngine().execute(iEngineOverride+"");
+////            new SetParking().execute(iParkingOverride+"");
+//            if(isEngineLoading && isParkingLoading) {
+//                builder.setView(R.layout.loading_dialog_view);
+//                builder.setTitle("Syncing");
+//                dialog = builder.create();
+//                dialog.show();
+//            }
+
+//            if(flag){
+//                dialog.hide();
+//                SharedPreferences shared = getApplicationContext().getSharedPreferences("override", Context.MODE_PRIVATE);
+//                shared.edit().remove("iParking").apply();
+//                shared.edit().remove("iEngine").apply();
+//            }
+//        }
         Timer t = new Timer();
+        
         t.schedule(new TimerTask() {
             @Override
             public void run() {

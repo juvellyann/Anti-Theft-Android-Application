@@ -163,6 +163,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Start the new activity here
+//                getActivity().finish();
+                Intent intent = new Intent(getContext(), LoginPage.class);
+                startActivity(intent);
                 getActivity().finish();
             };
         });

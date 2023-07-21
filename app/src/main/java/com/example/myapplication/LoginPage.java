@@ -100,18 +100,20 @@ public class LoginPage extends AppCompatActivity {
         int iEngineOverride = sharedPref.getInt("iEngine", -1);
         Log.d("Override iParking", iParkingOverride+"");
         Log.d("Override iEngine", iEngineOverride+"");
+        ConnectionHelper connectionHelper = new ConnectionHelper(this);
 
-        if(iParkingOverride != -1 && iEngineOverride != -1){
-            new SetEngine().execute(iEngineOverride+"");
-            new SetParking().execute(iParkingOverride+"");
-            if(isEngineLoading && isParkingLoading) {
-                builder.setView(R.layout.loading_dialog_view);
-                builder.setTitle("Syncing");
-                dialog = builder.create();
-                dialog.show();
+        if(connectionHelper.haveNetworkConnection()) {
+            if (iParkingOverride != -1 && iEngineOverride != -1) {
+                new SetEngine().execute(iEngineOverride + "");
+                new SetParking().execute(iParkingOverride + "");
+                if (isEngineLoading && isParkingLoading) {
+                    builder.setView(R.layout.loading_dialog_view);
+                    builder.setTitle("Syncing");
+                    dialog = builder.create();
+                    dialog.show();
+                }
             }
         }
-
 
         username = findViewById(R.id.InputUsername);
         password = findViewById(R.id.InputPassword);
