@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -51,6 +53,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.AsynchronousChannelGroup;
+import java.util.concurrent.ExecutionException;
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -70,10 +73,11 @@ public class HomeFragment extends Fragment {
     String linkUrl = "";
     String linkHomeInfo = "";
     MaterialSwitch checkSwitch, checkEngine;
-    TextView batteryLife;
+    TextView batteryLife, batteryLifeTxt, warningTxt;
     String setParking = null, setEngine = null, deviceId = null;
     int iParking, iEngine;
-    boolean isConnectedToArduino = false, local;
+    boolean isConnectedToArduino = false, local = false;
+    Button overrideBtn;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -117,55 +121,88 @@ public class HomeFragment extends Fragment {
         checkSwitch = (MaterialSwitch) view.findViewById(R.id.ParkingModeSwitch);
         checkEngine = (MaterialSwitch) view.findViewById(R.id.EngineImmobilizerSwitch);
         batteryLife = (TextView) view.findViewById(R.id.batteryLife);
-
+        batteryLifeTxt = (TextView) view.findViewById(R.id.EngineImmobilizerText);
+        overrideBtn = (Button) view.findViewById(R.id.overrideBtn);
+        warningTxt = (TextView) view.findViewById(R.id.warningTxt);
         ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
         boolean local = connectionHelper.pingNetwork("192.168.4.1");
-
+        SharedPreferences sharedPref = getContext().getSharedPreferences("override",Context.MODE_PRIVATE);
+        int pending = sharedPref.getInt("pending", -1);
+        if(pending == 1){
+            warningTxt.setVisibility(View.VISIBLE);
+        }else{
+            warningTxt.setVisibility(View.GONE);
+        }
         if(local) {
-            if(!hasModalShown) {
-                hasModalShown = true;
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("No Internet Connection");
-                builder.setMessage("Further actions will override your last settings. Continue?");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Call a method to override the values from the database
-                        isConnectedToArduino = true;
-                        SharedPreferences sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
-                        int iParking = sharedPref.getInt("iParking", -1);
-                        int iEngine = sharedPref.getInt("iEngine", -1);
-                        Log.d("Override iParking", iParking+"");
-                        Log.d("Override iEngine", iEngine+"");
+            sharedPref = getContext().getSharedPreferences("override",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("pending", 1);
+            editor.apply();
+            isConnectedToArduino = true;
+            batteryLifeTxt.setText("Override");
+            overrideBtn.setVisibility(View.VISIBLE);
+            sharedPref = getContext().getSharedPreferences("options",Context.MODE_PRIVATE);
+            iParking = sharedPref.getInt("iParking", -1);
+            iEngine = sharedPref.getInt("iEngine", -1);
+            Log.d("Override iParking", iParking+"");
+            Log.d("Override iEngine", iEngine+"");
+            if(iParking != -1 && iEngine != -1){
+                checkSwitch.setChecked(iParking == 1);
+                checkEngine.setChecked(iEngine == 1);
+            }
+
+            overrideBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        SharedPreferences sharedPref = getContext().getSharedPreferences("override",Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.remove("pending").apply();
+                        Object data = new OverrideHttp().execute().get();
                         if(iParking != -1 && iEngine != -1){
                             checkSwitch.setChecked(iParking == 1);
                             checkEngine.setChecked(iEngine == 1);
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Call a method to override the values from the database
-                        hasModalShown = false;
-                        isConnectedToArduino = false;
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("This action will set the last setting. ");
 
-                        getActivity().finish();
+                            builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Call a method to override the values from the database
+                                    Intent intent = new Intent(getContext(), LoginPage.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+                            });
+                            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Call a method to override the values from the database
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+
+                }
+            });
+        }else {
+            if(connectionHelper.haveNetworkConnection()){
+                new HttpRequestTask().execute();
+
+            }else{
             }
         }
 
-        if(connectionHelper.haveNetworkConnection()){
-            new HttpRequestTask().execute();
 
-        }else{
-        }
 
-        Info info = new Info();
-        info.execute(deviceId);
+//        Info info = new Info();
+//        info.execute(deviceId);
 
 
         checkSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -176,7 +213,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     setParking = "0";
                 }
-                String toWhere = (isConnectedToArduino)?"override":"options";
+                String toWhere = (local)?"override":"options";
                 SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iParking", Integer.parseInt(setParking));
@@ -198,7 +235,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     setEngine = "0";
                 }
-                String toWhere = (isConnectedToArduino)?"override":"options";
+                String toWhere = (local)?"override":"options";
                 SharedPreferences sharedPref = getContext().getSharedPreferences(toWhere,Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt("iEngine", Integer.parseInt(setEngine));
@@ -259,6 +296,39 @@ public class HomeFragment extends Fragment {
                     linkUrl = "http://192.168.4.1/setStatus?cmd=engine="+((engine=="1")?"on":"off");
                 }else {
                     linkUrl = "http://api.imbento.com/others/ctu2023_motorcycle_anti_theft/db.php?action=setEngine&status=" + engine + "&did=1";
+                }
+                URL url = new URL(linkUrl);
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet();
+                request.setURI(new URI(linkUrl));
+                HttpResponse response = client.execute(request);
+                BufferedReader in = new BufferedReader(new
+                        InputStreamReader(response.getEntity().getContent()));
+
+                StringBuffer sb = new StringBuffer("");
+                String line="";
+
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+
+                in.close();
+                return sb.toString();
+            } catch (Exception e){
+                return new String(e.getMessage());
+            }
+        }
+
+    }
+
+    public class OverrideHttp extends AsyncTask {
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            try{
+                if(isConnectedToArduino){
+                    linkUrl = "http://192.168.4.1/setStatus?cmd=override=off";
                 }
                 URL url = new URL(linkUrl);
                 HttpClient client = new DefaultHttpClient();

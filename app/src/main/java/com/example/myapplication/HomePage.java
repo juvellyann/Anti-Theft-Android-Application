@@ -170,7 +170,7 @@ public class HomePage extends AppCompatActivity {
                     int flag = Integer.parseInt(iDisturbance);
                     if(flag > 0){
                         if(!hasShown){
-                            NotificationHelper.showNotification(HomePage.this,"Disturbance","Disturbance Detected",1);
+                            NotificationHelper.showNotification(HomePage.this,(flag == 1)?"Disturbance":"Accident",(flag == 1)?"Disturbance Detected":"Accident Detected",flag);
                             hasShown = true;
                             Log.d("TimerTask",iDisturbance);
                             SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("disturbanceVal",Context.MODE_PRIVATE);
@@ -250,7 +250,7 @@ public class HomePage extends AppCompatActivity {
                     int flag = Integer.parseInt(iBattery);
                     if(flag < 20){
                         if(!hasShownBatt){
-                            NotificationHelper.showNotification(HomePage.this,"Battery Low","Warning: Battery is getting low!",2);
+                            NotificationHelper.showNotification(HomePage.this,"Battery Low","Warning: Battery is getting low!",3);
                             hasShownBatt = true;
                             Log.d("TimerTask",iBattery);
                         }

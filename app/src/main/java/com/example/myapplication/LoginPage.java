@@ -95,25 +95,11 @@ public class LoginPage extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.login_page);
         builder = new AlertDialog.Builder(this);
-        SharedPreferences sharedPref = this.getSharedPreferences("override",Context.MODE_PRIVATE);
-        int iParkingOverride = sharedPref.getInt("iParking", -1);
-        int iEngineOverride = sharedPref.getInt("iEngine", -1);
-        Log.d("Override iParking", iParkingOverride+"");
-        Log.d("Override iEngine", iEngineOverride+"");
-        ConnectionHelper connectionHelper = new ConnectionHelper(this);
+//        SharedPreferences sharedPref = this.getSharedPreferences("override",Context.MODE_PRIVATE);
+//        int iParkingOverride = sharedPref.getInt("iParking", -1);
+//        int iEngineOverride = sharedPref.getInt("iEngine", -1);
 
-        if(connectionHelper.haveNetworkConnection()) {
-            if (iParkingOverride != -1 && iEngineOverride != -1) {
-                new SetEngine().execute(iEngineOverride + "");
-                new SetParking().execute(iParkingOverride + "");
-                if (isEngineLoading && isParkingLoading) {
-                    builder.setView(R.layout.loading_dialog_view);
-                    builder.setTitle("Syncing");
-                    dialog = builder.create();
-                    dialog.show();
-                }
-            }
-        }
+        ConnectionHelper connectionHelper = new ConnectionHelper(this);
 
         username = findViewById(R.id.InputUsername);
         password = findViewById(R.id.InputPassword);
@@ -224,6 +210,7 @@ public class LoginPage extends AppCompatActivity {
                 if(isLocal){
                     Intent intent = new Intent(LoginPage.this, HomePage.class);
                     startActivity(intent);
+                    finish();
                     return;
                 }
 
