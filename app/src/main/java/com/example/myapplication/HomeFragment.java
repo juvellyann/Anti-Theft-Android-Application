@@ -217,7 +217,7 @@ public class HomeFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             parkHelpBtn.setTooltipText("Hello");
         }
-        TooltipCompat.setTooltipText(parkHelpBtn, "1. If \"On\" it will create intruders.\n2. If \"Off\", it will detect collision");
+        TooltipCompat.setTooltipText(parkHelpBtn, "1. If \"On\" it will detect intruders.\n2. If \"Off\", it will detect collision");
         TooltipCompat.setTooltipText(engineHelpBtn, "1. If \"On\" it will turn off the engine");
         TooltipCompat.setTooltipText(battOverrideHelpBtn, "Battery Status of the system");
 
