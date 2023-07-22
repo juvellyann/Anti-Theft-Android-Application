@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#A3C7D6"
-    tools:context=".HomeFragment">
+    tools:context=".HomeFragment"
+    >
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -24,7 +25,49 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@drawable/shape">
+        android:background="@drawable/shape"
+        >
+
+
+        <ImageButton
+            android:id="@+id/parkHelpBtn"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:background="@drawable/button_round_shape"
+            android:tooltipText="asas"
+            android:src="@drawable/help_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/ParkingModeText"
+            app:layout_constraintStart_toEndOf="@+id/ParkingModeText"
+            app:layout_constraintTop_toTopOf="@+id/ParkingModeText" />
+
+        <ImageButton
+            android:id="@+id/engineHelpBtn"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/button_round_shape"
+            android:scaleType="fitCenter"
+            android:src="@drawable/help_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/BatteryLifeText"
+            app:layout_constraintStart_toEndOf="@+id/BatteryLifeText"
+            app:layout_constraintTop_toTopOf="@+id/BatteryLifeText" />
+
+        <ImageButton
+            android:id="@+id/batteryHelpBtn"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/button_round_shape"
+            android:scaleType="fitCenter"
+            android:src="@drawable/help_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/EngineImmobilizerText"
+            app:layout_constraintStart_toEndOf="@+id/EngineImmobilizerText"
+            app:layout_constraintTop_toTopOf="@+id/EngineImmobilizerText" />
 
         <TextView
             android:id="@+id/ParkingModeText"
@@ -59,6 +102,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/BatteryLifeText"
+            app:thumbTint="@color/switch_thumb_selector"
             />
 
         <TextView
@@ -95,7 +139,9 @@
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ParkingModeText" />
+            app:layout_constraintTop_toBottomOf="@+id/ParkingModeText"
+            app:thumbTint="@color/switch_thumb_selector"
+            />
 
 
         <TextView
@@ -111,6 +157,54 @@
             app:layout_constraintTop_toBottomOf="@+id/ParkingModeSwitch" />
 
         <TextView
+            android:id="@+id/onLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="On"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ParkingModeSwitch"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toEndOf="@+id/ParkingModeSwitch" />
+
+        <TextView
+            android:id="@+id/offLbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:layout_marginEnd="10dp"
+            android:text="Off"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ParkingModeSwitch"
+            app:layout_constraintEnd_toStartOf="@+id/ParkingModeSwitch" />
+
+        <TextView
+            android:id="@+id/onLbl1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="On"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/EngineImmobilizerSwitch"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toEndOf="@+id/EngineImmobilizerSwitch" />
+
+        <TextView
+            android:id="@+id/offLbl1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:layout_marginEnd="10dp"
+            android:text="Off"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/EngineImmobilizerSwitch"
+            app:layout_constraintEnd_toStartOf="@+id/EngineImmobilizerSwitch" />
+
+        <TextView
             android:id="@+id/batteryLife"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -123,6 +217,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/EngineImmobilizerText" />
+
+
+        <!--        <Button-->
+<!--            android:id="@+id/button3"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/ParkingModeText"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:background="@drawable/button_round_shape"-->
+<!--            />-->
+
+<!--        <Button-->
+<!--            android:layout_width="20dp"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:background="@drawable/button_round_shape"-->
+<!--            android:gravity="center_vertical|center_horizontal"-->
+<!--            android:textColor="#fff"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/ParkingModeText"-->
+<!--            app:layout_constraintTop_toTopOf="parent" -->
+<!--            />-->
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

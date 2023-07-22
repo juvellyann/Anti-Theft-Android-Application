@@ -31,6 +31,7 @@ public class HomePage extends AppCompatActivity {
     boolean hasShown = false, hasShownBatt = false;
     AlertDialog.Builder builder;
     AlertDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

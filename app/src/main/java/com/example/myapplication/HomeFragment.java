@@ -11,8 +11,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,7 +80,8 @@ public class HomeFragment extends Fragment {
     String setParking = null, setEngine = null, deviceId = null;
     int iParking, iEngine;
     boolean isConnectedToArduino = false, local = false;
-    Button overrideBtn;
+    Button overrideBtn, temp;
+    ImageButton parkHelpBtn, engineHelpBtn, battOverrideHelpBtn;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -111,6 +115,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -124,6 +129,10 @@ public class HomeFragment extends Fragment {
         batteryLifeTxt = (TextView) view.findViewById(R.id.EngineImmobilizerText);
         overrideBtn = (Button) view.findViewById(R.id.overrideBtn);
         warningTxt = (TextView) view.findViewById(R.id.warningTxt);
+        parkHelpBtn = (ImageButton) view.findViewById(R.id.parkHelpBtn);
+        engineHelpBtn = view.findViewById(R.id.engineHelpBtn);
+        battOverrideHelpBtn = view.findViewById(R.id.batteryHelpBtn);
+
         ConnectionHelper connectionHelper = new ConnectionHelper(getContext());
         boolean local = connectionHelper.pingNetwork("192.168.4.1");
         SharedPreferences sharedPref = getContext().getSharedPreferences("override",Context.MODE_PRIVATE);
@@ -150,6 +159,8 @@ public class HomeFragment extends Fragment {
                 checkSwitch.setChecked(iParking == 1);
                 checkEngine.setChecked(iEngine == 1);
             }
+
+            TooltipCompat.setTooltipText(battOverrideHelpBtn, "Click the button after controlling the switch button \nfor the system to work.");
 
             overrideBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -203,7 +214,12 @@ public class HomeFragment extends Fragment {
             }
         }
 
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            parkHelpBtn.setTooltipText("Hello");
+        }
+        TooltipCompat.setTooltipText(parkHelpBtn, "1. If \"On\" it will create intruders.\n2. If \"Off\", it will detect collision");
+        TooltipCompat.setTooltipText(engineHelpBtn, "1. If \"On\" it will turn off the engine");
+        TooltipCompat.setTooltipText(battOverrideHelpBtn, "Battery Status of the system");
 
 //        Info info = new Info();
 //        info.execute(deviceId);

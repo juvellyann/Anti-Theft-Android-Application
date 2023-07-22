@@ -14,8 +14,8 @@
     </style>
 
     <style name="ThemeOverlay.App.Switch" parent="">
-        <item name="colorPrimary">#624F82</item>
-        <item name="colorSurfaceVariant">#3F3B6C</item>
+        <item name="colorPrimary">#34c759</item>
+        <item name="colorSurfaceVariant">#d3d3d3</item>
     </style>
 
 </resources>

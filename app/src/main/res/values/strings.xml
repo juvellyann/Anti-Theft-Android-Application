@@ -22,4 +22,6 @@
     <string name="GetLocationButton">Get Location</string>
     <string name="ProfileHeader">PROFILE</string>
     <string name="loginUsername">Name</string>
+    <string name="parkMessage">Hello</string>
+
 </resources>
